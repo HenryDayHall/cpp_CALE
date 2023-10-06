@@ -3,6 +3,7 @@
 
 #include <utility>
 #include <vector>
+#include <unordered_map>
 
 class Cluster
 {
@@ -10,50 +11,152 @@ class Cluster
     /**
      * @brief Constructor
      *
+     * @param sigma
+     * @param cutoff
+     * @param n_rounds
+     */
+    Cluster(const double& sigma, const double& cutoff, const int& n_rounds);
+     
+    /**
+     * @brief Chose a new set of particles to start clustering.   
+     *
      * @param labels labels of the particles to be clustered
      * @param energies energies of the particles to be clustered
      * @param pts transverse momenta of the particles to be clustered
      * @param rapidites rapidities of the particles to be clustered
      * @param phis azimuthal angles of the particles to be clustered
      */
-    Cluster(const std::vector<int>& labels,
-            const std::vector<double>& energies,
-            const std::vector<double>& pts,
-            const std::vector<double>& rapidites,
-            const std::vector<double>& phis);
+    void SetInputs(std::vector<int> labels,
+                   std::vector<double> energies,
+                   std::vector<double> pts,
+                   std::vector<double> rapidites,
+                   std::vector<double> phis);
 
     /**
-     * @brief Say which jets should be merged next.
-     * Returned as a pair of labels.
-     * If both numbers are the same, that jet is finished.
-     * @return pair of labels
+     * @brief Return the labels of the current pseudojets.
+     * @return vector of labels
      */
-    std::pair<int, int> GetNextMerge();
+    const std::vector<const int>* GetLabels() const;
     /**
-     * @brief Merge two jets.
+     * @brief Return the energies of the current pseudojets.
+     * @return vector of energies
+     */
+    const std::vector<const double>* GetEnergies() const;
+    /**
+     * @brief Return the energies of the current pseudojets.
+     * @param labels labels of the pseudojets to return
+     * @return vector of energies
+     */
+    const std::vector<const double>* GetEnergies(const std::vector<int>& labels) const;
+    /**
+     * @brief Return the transverse momenta of the current pseudojets.
+     * @return vector of transverse momenta
+     */
+    const std::vector<const double>* GetPts() const;
+    /**
+     * @brief Return the transverse momenta of the current pseudojets.
+     * @param labels labels of the pseudojets to return
+     * @return vector of transverse momenta
+     */
+    const std::vector<const double>* GetPts(const std::vector<int>& labels) const;
+    /**
+     * @brief Return the rapidities of the current pseudojets.
+     * @return vector of rapidities
+     */
+    const std::vector<const double>* GetRapidities() const;
+    /**
+     * @brief Return the rapidities of the current pseudojets.
+     * @param labels labels of the pseudojets to return
+     * @return vector of rapidities
+     */
+    const std::vector<const double>* GetRapidities(const std::vector<int>& labels) const;
+    /**
+     * @brief Return the azimuthal angles of the current pseudojets.
+     * @return vector of azimuthal angles
+     */
+    const std::vector<const double>* GetPhis() const;
+    /**
+     * @brief Return the azimuthal angles of the current pseudojets.
+     * @param labels labels of the pseudojets to return
+     * @return vector of azimuthal angles
+     */
+    const std::vector<const double>* GetPhis(const std::vector<int>& labels) const;
+
+
+    /**
+     * @brief Say which particles form the next jet.
+     * Returned as a list of labels.
+     * @return vector of labels
+     */
+    std::vector<int> GetNextMerge() const;
+    /**
+     * @brief Merge a set of pesudojets into a complete jet.
      * Calculate the kinematics of the new jet internally, and
      * give it the next free label.
      *
-     * @param label_1 label of the first jet
-     * @param label_2 label of the second jet
+     * @param labels labels of the pseudojets to merge
      */
-    void DoMerge(int label_1, int label_2);
+    void DoMerge(std::vector<int> labels);
     /**
-     * @brief Merge two jets.
+     * @brief Merge a set of pesudojets into a complete jet.
      * Merge the two jets, and assign the combined jet externally
-     * provided label and kienmatics.
+     * provided label and kinematics.
      *
-     * @param label_1 label of the first jet
-     * @param label_2 label of the second jet
+     * @param labels labels of the pseudojets to merge
      * @param energy energy of the new jet
      * @param pt transverse momentum of the new jet
      * @param rapidity rapidity of the new jet
      * @param phi azimuthal angle of the new jet
      */
-    void DoMerge(int label_1, int label_2, int label_new,
+    void DoMerge(std::vector<int> labels, int label_new,
                  double energy, double pt, double rapidity, double phi);
 
+    /**
+     * @brief Automatically complete the merging.
+     **/
+    void DoAllMerges();
+
+    /**
+     * @brief Check if all jets are complete.
+     * @return true if all jets are complete
+     **/
+    bool IsFinished() const;
+
+    /**
+     * @brief Get a list of currently existing jets.
+     *
+     * Mid cluster will return the pseudojets.
+     * Order matches order of GetJetConstituents, but
+     * otherwise is arbitrary.
+     *
+     * @return each item in the vector is the label or one completed jet.
+     **/
+    std::vector<int> GetJets() const;
+    /**
+     * @brief Get a list of particles in each jet.
+     *
+     * Mid cluster will return the pseudojets.
+     * Order matches order of GetJets, but otherwise is arbitrary.
+     *
+     * @return each item in the vector is all the labels of particles in one jet
+     **/
+    std::vector<std::vector<int>> GetJetConstituents() const;
+
+
+    /**
+     * @brief Get the next free label.
+     * @return next free label
+     **/
+    int GetNextFreeLabel();
+
   private:
+    /**
+     * The clustering parameters
+     **/
+    double m_sigma;
+    int m_n_rounds;
+    double m_cutoff;
+
     /**
      * @brief A numeric label > 0 for each jet.
      **/
@@ -83,9 +186,40 @@ class Cluster
     std::vector<double> m_pzs;
 
     /**
+     * @brief a matrix of the distances between particles squared.
+     * By default, in the anti-kT metric.
+     * Used to decide seed order and also to calculate the Laplacian.
+     **/
+    std::vector<std::vector<double>> m_distances;
+
+    /**
+     * @brief The calculated Laplacian of the event.
+     **/
+    std::vector<std::vector<double>> m_laplacian;
+    /**
+     * @brief The coefficients of the chebysheve polynomials.
+     * This is the same for all clusterings, so it is static.
+     * 50 coefficients are calculated, which is quite arbitary.
+     **/
+    static std::vector<double> s_chebyshev_coefficients;
+
+    /**
+     * @brief the maximum number of jets the clustering could yield
+     **/
+    int m_max_jets;
+
+    /**
      * @brief Indicates if a jet is avaliable for further joining.
      **/
     std::vector<bool> m_avaliable;
+    /**
+     * @brief Notes the index of each label in the internal list of labels.
+     **/
+    std::unordered_map<int, int> m_label_to_index;
+    /**
+     * @brief One value higher than the curant highest label value.
+     **/
+    int m_next_free_label = 0;
     /**
      * @brief Indicates if a jet has been merged with the beam.
      **/
@@ -94,21 +228,37 @@ class Cluster
      * @brief The label of the parent jet for each jet.
      * Jets with no parents get a label of -1.
      **/
-    std::vector<int> m_parentLabels;
+    std::vector<int> m_parent_labels;
+    /**
+     * @brief The label of each completed jet.
+     **/
+    std::vector<int> m_completed_labels;
+    /**
+     * @brief The labels of the constituents of each completed jet.
+     **/
+    std::vector<std::vector<int>> m_completed_constituents;
 
     /**
-     * @brief Calculate the kinematics of merging two jets.
-     * @param label_1 label of the first jet
-     * @param label_2 label of the second jet
+     * @brief Calculate the kinematics of merging multiple jets.
+     * @param labels labels of the jets to merge
      * @return vector of kinematics, energy, pt, rapidity, phi
      **/
-    std::vector<double> GetMergedKinematics(int label_1, int label_2);
+    std::vector<double> GetMergedKinematics(std::vector<int> labels) const;
 
     /**
-     * @brief Get the next free label.
-     * @return next free label
+     * @brief Get the index of the object to be used as a seed.
+     * @param start_seed_idx index of the seed to start from,
+     *                      normally, the number of jets is a good choice
+     *                      but sometimes nothing is captured by a wavlet, so the next
+     *                      seed should be used.
+     * @return internal index of the seed
      **/
-    int GetNextFreeLabel();
+    int GetSeed(int start_seed_idx) const;
+
+    /**
+     * @brief Ordered list of indices to use as seeds
+     **/
+    std::vector<int> m_seed_indices;
 };
 
 #endif // CLUSTER_HXX
