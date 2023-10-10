@@ -14,59 +14,16 @@ class Functions
      * @param symmetrix_matrix The symmetrix matrix.
      * @return The maximum eigenvalue.
      */
-    double MaxEigenvalue(const std::vector<std::vector<double>>& symmetrix_matrix) const;
+    static double MaxEigenvalue(const std::vector<std::vector<double>>& symmetrix_matrix);
 
-    /**
-     * @brief Approximate the maximum eigenvalue of a symmetrix matrix.
-     * @param symmetrix_matrix The symmetrix matrix.
-     * @return The approximate maximum eigenvalue.
-     */
-    double RoughMaxEigenvalue(const std::vector<std::vector<double>>& symmetrix_matrix) const;
 
     /**
      * @brief Rescale eigenvalues of the laplacien to -1 to 1.
      * Operates in place.
      * @param laplacien The laplacien.
      */
-    void RescaleLaplacian(std::vector<std::vector<double>>& laplacien) const;
+    static void RescaleLaplacian(std::vector<std::vector<double>>& laplacien);
 
-
-    /**
-     * @brief Compute a set of wavelet scales for spectrum bound.
-     *
-     * Scales are spaced logarithmically between the mimumum and
-     * maximum effective scales.
-     * @param min_eigenvalue The minimum non-zero eigenvalue of the laplacien.
-     * @param max_eigenvalue The maximum eigenvalue of the laplacien.
-     * @param number_of_scales The number of scales to compute.
-     * @return Hopefully good set of wavelet scales.
-     */
-    std::vector<double> ChoseScales(const double& min_eigenvalue, const double& max_eigenvalue, const int& number_of_scales) const;
-
-    /**
-     * @brief Compute the Mh exponential kernal at inputs.
-     * @param input The location at which to compute.
-     * @return The value of the kernal at the input.
-     **/
-    std::vector<double> MhKernal(const std::vector<double>& input) const;
-
-    /**
-     * @brief Compute the Abspline kernal at inputs.
-     * @param input The location at which to compute.
-     * @param param_a The parameter a.
-     * @param param_b The parameter b.
-     * @param param_t1 The parameter t1.
-     * @param param_t2 The parameter t2.
-     * @return The value of the kernal at the input.
-     **/
-    std::vector<double> AbsplineKernal(const std::vector<double>& input, const double& param_a, const double& param_b,
-                                       const double& param_t1, const double& param_t2) const;
-
-    /**
-     * @brief types of kernal avaliable.
-     **/
-    enum KernalType {abspline, mh};
-        
     /**
      * @brief Compute Chebyshev coefficients of a kernal.
      * @param kernal The kernal to compute the coefficients of.
@@ -76,9 +33,9 @@ class Functions
      * @param approx_interval_max upper bound of the interval of approximation.
      * @return The Chebyshev coefficients of the kernal.
      **/
-    std::vector<double> ChebyshevCoefficients(std::vector<double> (*kernal)(const std::vector<double>&),
+    static std::vector<double> ChebyshevCoefficients(std::vector<double> (*kernal)(const std::vector<double>&),
                                               const int& max_coefficients, const int& grid_order=-1,
-                                              const double& approx_interval_min=-1.0, const double& approx_interval_max=1.0) const;
+                                              const double& approx_interval_min=-1.0, const double& approx_interval_max=1.0);
         
     /**
      * @brief Compute Chebyshev coefficients of a negative exponent kernal.
@@ -88,8 +45,8 @@ class Functions
      * @param approx_interval_max upper bound of the interval of approximation.
      * @return The Chebyshev coefficients of the kernal.
      **/
-    std::vector<double> ChebyshevCoefficients(const int& max_coefficients, const int& grid_order=-1,
-                                              const double& approx_interval_min=-1.0, const double& approx_interval_max=1.0) const;
+    static std::vector<double> ChebyshevCoefficients(const int& max_coefficients, const int& grid_order=-1,
+                                              const double& approx_interval_min=-1.0, const double& approx_interval_max=1.0);
 
 
     /**
@@ -100,15 +57,15 @@ class Functions
      * @param interval The interval to approximate in.
      * @return The approximation of the eigenvalues.
      **/
-    std::vector<double> LaplacianWavelet(const std::vector<double> &laplacian, const std::vector<double> &chebyshev_coefficients,
-                                         const int& center_idx, const std::pair<double, double>& interval) const;
+    static std::vector<double> LaplacianWavelet(const std::vector<double> &laplacian, const std::vector<double> &chebyshev_coefficients,
+                                         const int& center_idx, const std::pair<double, double>& interval);
     /**
      * @brief Distance between to angles.
      * @param phi1 The first angle.
      * @param phi2 The second angle.
      * @return The distance between the two angles.
      **/
-    double AngularDistance(const double& phi1, const double& phi2) const;
+    static double AngularDistance(const double& phi1, const double& phi2);
 
     /**
      * @brief Distance squared between two particles in the Cambridge-Aachen metric.
@@ -118,8 +75,8 @@ class Functions
      * @param phi2 The azimuthal angle of the second particle.
      * @return The distance squared between the two particles.
      **/
-    double CambridgeAachenDistance2(const double& rapidity1, const double& phi1, 
-                                    const double& rapidity2, const double& phi2) const;
+    static double CambridgeAachenDistance2(const double& rapidity1, const double& phi1, 
+                                    const double& rapidity2, const double& phi2);
 
     /**
      * @brief Distance between two particles in the Generalised-Kt metric.
@@ -132,9 +89,9 @@ class Functions
      * @param the exponent of the metric.
      * @return The distance between the two particles.
      **/
-    double GeneralisedKtDistance(const double& pt1, const double& rapidity1, const double& phi1, 
+    static double GeneralisedKtDistance(const double& pt1, const double& rapidity1, const double& phi1, 
                                  const double& pt2, const double& rapidity2, const double& phi2,
-                                 const double& exponent) const;
+                                 const double& exponent);
 
     /**
      * @brief Distance matrix between a set of particles in the Generalised-Kt metric.
@@ -144,10 +101,10 @@ class Functions
      * @param the exponent of the metric.
      * @return The distance matrix between the particles.
      **/
-    std::vector<std::vector<double>> GeneralisedKtDistanceMatrix(const std::vector<double>& pts,
+    static std::vector<std::vector<double>> GeneralisedKtDistanceMatrix(const std::vector<double>& pts,
                                                                  const std::vector<double>& rapidities,
                                                                  const std::vector<double>& phis,
-                                                                 const double& exponent) const;
+                                                                 const double& exponent);
 
     enum JetMetrics {cambridge_aachen, kt, antikt};
     /**
@@ -161,9 +118,9 @@ class Functions
      * @param the enum value of the metric.
      * @return The distance between the two particles.
      **/
-    double NamedDistance(const double& pt1, const double& rapidity1, const double& phi1, 
+    static double NamedDistance(const double& pt1, const double& rapidity1, const double& phi1, 
                          const double& pt2, const double& rapidity2, const double& phi2,
-                         const JetMetrics& metric) const;
+                         const JetMetrics& metric);
 
     /**
      * @brief Distance matrix between a set of particles in a named jet metric.
@@ -173,9 +130,9 @@ class Functions
      * @param metric The enum value of the metric.
      * @return The matrix of distances.
      **/
-    std::vector<std::vector<double>> NamedDistanceMatrix(
+    static std::vector<std::vector<double>> NamedDistanceMatrix(
         const std::vector<double>& pts, const std::vector<double>& rapidities, const std::vector<double>& phis,
-        const JetMetrics& metric) const;
+        const JetMetrics& metric);
 
     /**
      * @brief Affinity matrix for a set of particles.
@@ -184,9 +141,9 @@ class Functions
      * @param sigma The sigma in the denominator of the exponent of the affinity.
      * @return The matrix of affinites.
      **/
-    std::vector<std::vector<double>> Affinities(
+    static std::vector<std::vector<double>> Affinities(
         const std::vector<double>& rapidities, const std::vector<double>& phis,
-        const double& sigma) const;
+        const double& sigma);
 
     /**
      * @brief Graph laplacien for a set of particles.
@@ -195,18 +152,20 @@ class Functions
      * @param normalised Whether to normalise the laplacien.
      * @return The laplacien.
      **/
-    std::vector<std::vector<double>> Laplacien(
+    static std::vector<std::vector<double>> Laplacian(
         const std::vector<std::vector<double>>& distances2,
-        const double& sigma, const bool& normalised=true) const;
+        const double& sigma, const bool& normalised=true);
 
     /**
      * @brief From detector coordinates, calculate cartesien coordinates
+     * @param energy The energy.
      * @param pt The transverse momentum.
      * @param rapidity The rapidity.
      * @param phi The azimuthal angle.
      * @return The px, py, pz.
      **/
-    std::vector<double> PxPyPz(const double& pt, const double& rapidity, const double& phi) const;
+    static std::vector<double> PxPyPz(const double& energy, const double& pt,
+                               const double& rapidity, const double& phi);
 
     /**
      * @brief From cartesien coordinates, calculate detector coordinates
@@ -215,7 +174,7 @@ class Functions
      * @param pz The z momentum.
      * @return The pt, rapidity, phi.
      **/
-    std::vector<double> PtRapPhi(const double& px, const double& py, const double& pz) const;
+    static std::vector<double> PtRapPhi(const double& px, const double& py, const double& pz);
 
 };
 

@@ -36,51 +36,51 @@ class Cluster
      * @brief Return the labels of the current pseudojets.
      * @return vector of labels
      */
-    const std::vector<const int>* GetLabels() const;
+    const std::vector<int>* GetLabels() const;
     /**
      * @brief Return the energies of the current pseudojets.
      * @return vector of energies
      */
-    const std::vector<const double>* GetEnergies() const;
+    const std::vector<double>* GetEnergies() const;
     /**
      * @brief Return the energies of the current pseudojets.
      * @param labels labels of the pseudojets to return
      * @return vector of energies
      */
-    const std::vector<const double>* GetEnergies(const std::vector<int>& labels) const;
+    const std::vector<double>* GetEnergies(const std::vector<int>& labels) const;
     /**
      * @brief Return the transverse momenta of the current pseudojets.
      * @return vector of transverse momenta
      */
-    const std::vector<const double>* GetPts() const;
+    const std::vector<double>* GetPts() const;
     /**
      * @brief Return the transverse momenta of the current pseudojets.
      * @param labels labels of the pseudojets to return
      * @return vector of transverse momenta
      */
-    const std::vector<const double>* GetPts(const std::vector<int>& labels) const;
+    const std::vector<double>* GetPts(const std::vector<int>& labels) const;
     /**
      * @brief Return the rapidities of the current pseudojets.
      * @return vector of rapidities
      */
-    const std::vector<const double>* GetRapidities() const;
+    const std::vector<double>* GetRapidities() const;
     /**
      * @brief Return the rapidities of the current pseudojets.
      * @param labels labels of the pseudojets to return
      * @return vector of rapidities
      */
-    const std::vector<const double>* GetRapidities(const std::vector<int>& labels) const;
+    const std::vector<double>* GetRapidities(const std::vector<int>& labels) const;
     /**
      * @brief Return the azimuthal angles of the current pseudojets.
      * @return vector of azimuthal angles
      */
-    const std::vector<const double>* GetPhis() const;
+    const std::vector<double>* GetPhis() const;
     /**
      * @brief Return the azimuthal angles of the current pseudojets.
      * @param labels labels of the pseudojets to return
      * @return vector of azimuthal angles
      */
-    const std::vector<const double>* GetPhis(const std::vector<int>& labels) const;
+    const std::vector<double>* GetPhis(const std::vector<int>& labels) const;
 
 
     /**
@@ -202,6 +202,11 @@ class Cluster
      * 50 coefficients are calculated, which is quite arbitary.
      **/
     static std::vector<double> s_chebyshev_coefficients;
+    /**
+     * @brief the intercal for approximation.
+     * This is the same for all clusterings, so it is static.
+     **/
+    static std::pair<double, double> s_interval;
 
     /**
      * @brief the maximum number of jets the clustering could yield
