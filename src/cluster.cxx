@@ -82,7 +82,7 @@ const std::vector<double>* Cluster::GetEnergies(const std::vector<int>& labels) 
   std::vector<const double> energies(labels.size());
   int index;
   for (int label : labels){
-    energies.push_back(energies[m_label_to_index[label]]);
+    energies.push_back(m_energies[m_label_to_index[label]]);
   }
   return &energies;
 };
@@ -94,7 +94,7 @@ const std::vector<double>* Cluster::GetPts() const {
 const std::vector<double>* Cluster::GetPts(const std::vector<int>& labels) const {
   std::vector<double> pts(labels.size());
   for (int label : labels){
-    pts.push_back(pts[m_label_to_index[label]]);
+    pts.push_back(m_pts[m_label_to_index[label]]);
   }
   return &pts;
 };
@@ -106,7 +106,7 @@ const std::vector<double>* Cluster::GetRapidites() const {
 const std::vector<double>* Cluster::GetRapidites(const std::vector<int>& labels) const {
   std::vector<double> rapidites(labels.size());
   for (int label : labels){
-    rapidites.push_back(rapidites[m_label_to_index[label]]);
+    rapidites.push_back(m_rapidites[m_label_to_index[label]]);
   }
   return &rapidites;
 };
@@ -118,7 +118,7 @@ const std::vector<double>* Cluster::GetPhis() const {
 const std::vector<double>* Cluster::GetPhis(const std::vector<int>& labels) const {
   std::vector<double> phis(labels.size());
   for (int label : labels){
-    phis.push_back(phis[m_label_to_index[label]]);
+    phis.push_back(m_phis[m_label_to_index[label]]);
   }
   return &phis;
 };
