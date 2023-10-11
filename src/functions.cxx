@@ -69,8 +69,10 @@ std::vector<double> Functions::ChebyshevCoefficients(const int& max_coefficients
  * @param interval The interval to approximate in.
  * @return The approximation of the eigenvalues.
  **/
-std::vector<double> LaplacianWavelet(const std::vector<double> &laplacian, const std::vector<double> &chebyshev_coefficients,
-                                     const int& center_idx, const std::pair<double, double>& interval) const;
+std::vector<double> LaplacianWavelet(const std::vector<std::vector<double>> &laplacian, const std::vector<double> &chebyshev_coefficients,
+                                     const int& center_idx, const std::pair<double, double>& interval) const {
+  //TODO
+}
 
 
 double Functions::AngularDistance(const double& phi1, const double& phi2){

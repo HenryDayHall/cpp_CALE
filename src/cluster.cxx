@@ -70,83 +70,84 @@ void Cluster::SetInputs(std::vector<int> labels,
             [&summed_distances](int i1, int i2){return summed_distances[i1] < summed_distances[i2];});
 };
 
-const std::vector<int>* Cluster::GetLabels() const {
-  return &m_labels;
+const std::vector<int>& Cluster::GetLabels() const {
+  return m_labels;
 };
 
-const std::vector<double>* Cluster::GetEnergies() const {
-  return &m_energies;
+const std::vector<double>& Cluster::GetEnergies() const {
+  return m_energies;
 };
 
-const std::vector<double>* Cluster::GetEnergies(const std::vector<int>& labels) const {
-  std::vector<const double> energies(labels.size());
-  int index;
+const std::vector<double> Cluster::GetEnergies(const std::vector<int>& labels) const {
+  std::vector<double> energies(labels.size());
   for (int label : labels){
-    energies.push_back(m_energies[m_label_to_index[label]]);
+    energies.push_back(m_energies[m_label_to_index.at(label)]);
   }
-  return &energies;
+  return energies;
 };
 
-const std::vector<double>* Cluster::GetPts() const {
-  return &m_pts;
+const std::vector<double>& Cluster::GetPts() const {
+  return m_pts;
 };
 
-const std::vector<double>* Cluster::GetPts(const std::vector<int>& labels) const {
+const std::vector<double> Cluster::GetPts(const std::vector<int>& labels) const {
   std::vector<double> pts(labels.size());
   for (int label : labels){
-    pts.push_back(m_pts[m_label_to_index[label]]);
+    pts.push_back(m_pts[m_label_to_index.at(label)]);
   }
-  return &pts;
+  return pts;
 };
 
-const std::vector<double>* Cluster::GetRapidites() const {
-  return &m_rapidites;
+const std::vector<double>& Cluster::GetRapidites() const {
+  return m_rapidites;
 };
 
-const std::vector<double>* Cluster::GetRapidites(const std::vector<int>& labels) const {
+const std::vector<double> Cluster::GetRapidites(const std::vector<int>& labels) const {
   std::vector<double> rapidites(labels.size());
   for (int label : labels){
-    rapidites.push_back(m_rapidites[m_label_to_index[label]]);
+    rapidites.push_back(m_rapidites[m_label_to_index.at(label)]);
   }
-  return &rapidites;
+  return rapidites;
 };
 
-const std::vector<double>* Cluster::GetPhis() const {
-  return &m_phis;
+const std::vector<double>& Cluster::GetPhis() const {
+  return m_phis;
 };
 
-const std::vector<double>* Cluster::GetPhis(const std::vector<int>& labels) const {
+const std::vector<double> Cluster::GetPhis(const std::vector<int>& labels) const {
   std::vector<double> phis(labels.size());
   for (int label : labels){
-    phis.push_back(m_phis[m_label_to_index[label]]);
+    phis.push_back(m_phis[m_label_to_index.at(label)]);
   }
-  return &phis;
+  return phis;
 };
 
-int Cluster::GetSeed(int start_seed_idx){
+int Cluster::GetSeed(int start_seed_idx) const {
   // The seed idx must be at least the number of completed jets in
   int idx = start_seed_idx;
-  while (m_available[m_seed_indices[idx]] == false){
+  while (m_avaliable[m_seed_indices[idx]] == false){
     idx++;
   }  
   return m_seed_indices[idx];
 };
 
 
-std::vector<int> Cluster::GetNextMerge(){
+std::vector<int> Cluster::GetNextMerge() const {
   std::vector<int> labels;
-  int start_seed_idx = m_completed_jets.size();
+  int start_seed_idx = m_completed_labels.size();
   int seed = this->GetSeed(start_seed_idx);
   while (labels.size() == 0){
     // Decide what is close to the seed
-    std::vector<double> wavelets = Functions::LaplacianWavelet(m_laplacian, s_chebychev_coefficients,
-                                                                   seed, s_interval);
+    std::vector<double> wavelets = Functions::LaplacianWavelet(m_laplacian, 
+                                                               Cluster::s_chebyshev_coefficients,
+                                                               seed, 
+                                                               Cluster::s_interval);
     double max_wavelet = *std::max_element(wavelets.begin(), wavelets.end());
     double min_wavelet = *std::min_element(wavelets.begin(), wavelets.end());
     double shifted_threshold = (max_wavelet - min_wavelet)*(m_cutoff + 1.)/2. + min_wavelet;
     for (int i=0; i<wavelets.size(); i++){
       // Don't bother with things that aren't available
-      if (!m_available[i]){
+      if (!m_avaliable[i]){
         continue;
       }
       // Scale the wavelets from -1 to 1
@@ -183,16 +184,16 @@ void Cluster::DoMerge(std::vector<int> labels, int label_new,
   m_label_to_index[label_new] = m_labels.size()-1;
   // Get the px, py, pz of the new particle
   std::vector<double> pxpypz = Functions::PxPyPz(energy, pt, rapidity, phi);
-  m_px.push_back(pxpypz[0]);
-  m_py.push_back(pxpypz[1]);
-  m_pz.push_back(pxpypz[2]);
+  m_pxs.push_back(pxpypz[0]);
+  m_pys.push_back(pxpypz[1]);
+  m_pzs.push_back(pxpypz[2]);
   // update the availability and parantage
   for (int label : labels){
-    m_available[m_label_to_index[label]] = false;
+    m_avaliable[m_label_to_index[label]] = false;
     m_parent_labels[m_label_to_index[label]] = label_new;
   }
   // The final jet is not only unavailable, but also finished
-  m_available.push_back(false);
+  m_avaliable.push_back(false);
   m_finished.push_back(true);
   m_parent_labels.push_back(-1);
 };
@@ -204,22 +205,22 @@ void Cluster::DoAllMerges(){
   }
 };
 
-bool Cluster::IsFinished(){
+bool Cluster::IsFinished() const {
   if (m_completed_labels.size() == m_max_jets){
     return true;
   }
   // We do not expect all pseudojets to be finished, the ones
   // that are merged into other jets are "unfinished"
   // but we do expect that none of them are available
-  return std::none_of(m_available.begin(), m_available.end(), [](bool v) { return v; });
+  return std::none_of(m_avaliable.begin(), m_avaliable.end(), [](bool v) { return v; });
 };
 
-std::vector<int> Cluster::GetJets(){
+std::vector<int> Cluster::GetJets() const {
   return m_completed_labels;
 };
 
 
-std::vector<std::vector<int>> Cluster::GetJetConstituents(){
+std::vector<std::vector<int>> Cluster::GetJetConstituents() const {
   return m_completed_constituents;
 };
 
@@ -229,18 +230,18 @@ int Cluster::GetNextFreeLabel(){
 };
 
 
-std::vector<double> Cluster::GetMergedKinematics(std::vector<int> labels){
+std::vector<double> Cluster::GetMergedKinematics(std::vector<int> labels) const {
   double e = 0;
   double px = 0;
   double py = 0;
   double pz = 0;
   int idx;
   for (int label : labels){
-    idx = m_label_to_index[label]; 
+    idx = m_label_to_index.at(label); 
     e += m_energies[idx];
-    px += m_px[idx];
-    py += m_py[idx];
-    pz += m_pz[idx];
+    px += m_pxs[idx];
+    py += m_pys[idx];
+    pz += m_pzs[idx];
   }
   std::vector<double> kinematics = Functions::PtRapPhi(e, px, py, pz);
   kinematics.insert(kinematics.begin(), e);

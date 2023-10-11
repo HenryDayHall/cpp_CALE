@@ -36,51 +36,51 @@ class Cluster
      * @brief Return the labels of the current pseudojets.
      * @return vector of labels
      */
-    const std::vector<int>* GetLabels() const;
+    const std::vector<int>& GetLabels() const;
     /**
      * @brief Return the energies of the current pseudojets.
      * @return vector of energies
      */
-    const std::vector<double>* GetEnergies() const;
+    const std::vector<double>& GetEnergies() const;
     /**
      * @brief Return the energies of the current pseudojets.
      * @param labels labels of the pseudojets to return
      * @return vector of energies
      */
-    const std::vector<double>* GetEnergies(const std::vector<int>& labels) const;
+    const std::vector<double> GetEnergies(const std::vector<int>& labels) const;
     /**
      * @brief Return the transverse momenta of the current pseudojets.
      * @return vector of transverse momenta
      */
-    const std::vector<double>* GetPts() const;
+    const std::vector<double>& GetPts() const;
     /**
      * @brief Return the transverse momenta of the current pseudojets.
      * @param labels labels of the pseudojets to return
      * @return vector of transverse momenta
      */
-    const std::vector<double>* GetPts(const std::vector<int>& labels) const;
+    const std::vector<double> GetPts(const std::vector<int>& labels) const;
     /**
      * @brief Return the rapidities of the current pseudojets.
      * @return vector of rapidities
      */
-    const std::vector<double>* GetRapidities() const;
+    const std::vector<double>& GetRapidites() const;
     /**
      * @brief Return the rapidities of the current pseudojets.
      * @param labels labels of the pseudojets to return
      * @return vector of rapidities
      */
-    const std::vector<double>* GetRapidities(const std::vector<int>& labels) const;
+    const std::vector<double> GetRapidites(const std::vector<int>& labels) const;
     /**
      * @brief Return the azimuthal angles of the current pseudojets.
      * @return vector of azimuthal angles
      */
-    const std::vector<double>* GetPhis() const;
+    const std::vector<double>& GetPhis() const;
     /**
      * @brief Return the azimuthal angles of the current pseudojets.
      * @param labels labels of the pseudojets to return
      * @return vector of azimuthal angles
      */
-    const std::vector<double>* GetPhis(const std::vector<int>& labels) const;
+    const std::vector<double> GetPhis(const std::vector<int>& labels) const;
 
 
     /**

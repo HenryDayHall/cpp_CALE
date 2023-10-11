@@ -57,7 +57,8 @@ class Functions
      * @param interval The interval to approximate in.
      * @return The approximation of the eigenvalues.
      **/
-    static std::vector<double> LaplacianWavelet(const std::vector<double> &laplacian, const std::vector<double> &chebyshev_coefficients,
+    static std::vector<double> LaplacianWavelet(const std::vector<std::vector<double>> &laplacian,
+                                         const std::vector<double> &chebyshev_coefficients,
                                          const int& center_idx, const std::pair<double, double>& interval);
     /**
      * @brief Distance between to angles.
@@ -169,12 +170,13 @@ class Functions
 
     /**
      * @brief From cartesien coordinates, calculate detector coordinates
+     * @param energy The energy.
      * @param px The x momentum.
      * @param py The y momentum.
      * @param pz The z momentum.
      * @return The pt, rapidity, phi.
      **/
-    static std::vector<double> PtRapPhi(const double& px, const double& py, const double& pz);
+    static std::vector<double> PtRapPhi(const double& energy, const double& px, const double& py, const double& pz);
 
 };
 
