@@ -112,7 +112,7 @@ std::vector<double> Functions::MatrixDotVector(const std::vector<std::vector<dou
 };
 
 std::vector<double> Functions::LaplacianWavelet(const std::vector<std::vector<double>> &laplacian, const std::vector<double> &chebyshev_coefficients,
-                                     const int& center_idx, const std::pair<double, double>& interval) const {
+                                     const int& center_idx, const std::pair<double, double>& interval) {
   int n_rows = laplacian.size();
   // An all zero laplacian is a special case
   bool all_zero = true;
@@ -189,11 +189,21 @@ double Functions::GeneralisedKtDistance(const double& pt1, const double& rapidit
   return std::pow(std::min(pt1, pt2), exponent) * std::sqrt(ca_distance2);
 };
 
-std::vector<std::vector<double>> GeneralisedKtDistanceMatrix(const std::vector<double>& pts,
+std::vector<std::vector<double>> Functions::GeneralisedKtDistanceMatrix(const std::vector<double>& pts,
                                                              const std::vector<double>& rapidities,
                                                              const std::vector<double>& phis,
                                                              const double& exponent){
-
+  int n_particles = pts.size();
+  std::vector<std::vector<double>> result(n_particles, std::vector<double>(n_particles, 0.));
+  for (int row=0; row<n_particles; row++){
+    for (int col=0; col<row; col++){
+      result[row][col] = GeneralisedKtDistance(pts[row], rapidities[row], phis[row],
+                                               pts[col], rapidities[col], phis[col],
+                                               exponent);
+      result[col][row] = result[row][col];
+    };
+  };
+  return result;
 };
 
 enum JetMetrics {cambridge_aachen, kt, antikt};
@@ -208,9 +218,21 @@ enum JetMetrics {cambridge_aachen, kt, antikt};
  * @param the enum value of the metric.
  * @return The distance between the two particles.
  **/
-double NamedDistance(const double& pt1, const double& rapidity1, const double& phi1, 
-                     const double& pt2, const double& rapidity2, const double& phi2,
-                     const JetMetrics& metric) const;
+double Functions::NamedDistance(const double& pt1, const double& rapidity1, const double& phi1, 
+                                const double& pt2, const double& rapidity2, const double& phi2,
+                                const JetMetrics& metric){
+  switch (metric) {
+    case cambridge_aachen:
+      return CambridgeAachenDistance2(rapidity1, phi1, rapidity2, phi2);
+    case kt:
+      return GeneralisedKtDistance(pt1, rapidity1, phi1, pt2, rapidity2, phi2, 1.);
+    case antikt:
+      return GeneralisedKtDistance(pt1, rapidity1, phi1, pt2, rapidity2, phi2, -1.);
+    default:
+      throw std::invalid_argument("Invalid jet metric");
+  };
+
+};
 
 /**
  * @brief Distance matrix between a set of particles in a named jet metric.
@@ -222,7 +244,18 @@ double NamedDistance(const double& pt1, const double& rapidity1, const double& p
  **/
 std::vector<std::vector<double>> Functions::NamedDistanceMatrix(
     const std::vector<double>& pts, const std::vector<double>& rapidities, const std::vector<double>& phis,
-    const JetMetrics& metric) const;
+    const JetMetrics& metric){
+  switch (metric) {
+    case cambridge_aachen:
+      return GeneralisedKtDistanceMatrix(pts, rapidities, phis, 0.);
+    case kt:
+      return GeneralisedKtDistanceMatrix(pts, rapidities, phis, 1.);
+    case antikt:
+      return GeneralisedKtDistanceMatrix(pts, rapidities, phis, -1.);
+    default:
+      throw std::invalid_argument("Invalid jet metric");
+  };
+};
 
 
 std::vector<std::vector<double>> Functions::Affinities(
