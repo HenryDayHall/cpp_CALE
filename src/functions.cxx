@@ -342,7 +342,7 @@ std::vector<double> Functions::PxPyPz(const double& energy, const double& pt,
   double px = pt*std::cos(phi);
   double py = pt*std::sin(phi);
   double rapidity_factor = std::exp(2*rapidity);
-  double pz = energy*(1-rapidity_factor)/(1+rapidity_factor);
+  double pz = energy*(rapidity_factor-1)/(1+rapidity_factor);
   return {px, py, pz};
 };
 
@@ -350,7 +350,7 @@ std::vector<double> Functions::PtRapPhi(const double& energy, const double& px,
                                         const double& py, const double& pz){
   double pt = std::sqrt(px*px + py*py);
   double phi = std::atan2(py, px);
-  double rapidity = 0.5*std::log((energy+pz)/(energy-pz));
+  double rapidity = std::copysign(0.5*std::log((energy+pz)/(energy-pz)), pz);
   return {pt, rapidity, phi};
 };
 

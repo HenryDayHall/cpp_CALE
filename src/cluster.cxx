@@ -6,6 +6,11 @@
 
 #include <iostream>
 #define MSG(x) std::cout << __FILE__ << ">" << __LINE__ << "; " << x << std::endl;
+#define PRINT_VECTOR(x) std::cout << __FILE__ << ">" << __LINE__ << "; " << #x << std::endl; \
+  for (auto element : x){ \
+    std::cout << element << " "; \
+  } \
+  std::cout << std::endl;
 #define PRINT_MATRIX(x) std::cout << __FILE__ << ">" << __LINE__ << "; " << #x << std::endl; \
   for (auto row : x){ \
     for (auto element : row){ \
@@ -99,8 +104,8 @@ const std::vector<double>& Cluster::GetEnergies() const {
 
 const std::vector<double> Cluster::GetEnergies(const std::vector<int>& labels) const {
   std::vector<double> energies(labels.size());
-  for (int label : labels){
-    energies.push_back(m_energies[m_label_to_index.at(label)]);
+  for (int i=0; i<labels.size(); i++){
+    energies[i] = m_energies[m_label_to_index.at(labels[i])];
   }
   return energies;
 };
@@ -111,8 +116,8 @@ const std::vector<double>& Cluster::GetPts() const {
 
 const std::vector<double> Cluster::GetPts(const std::vector<int>& labels) const {
   std::vector<double> pts(labels.size());
-  for (int label : labels){
-    pts.push_back(m_pts[m_label_to_index.at(label)]);
+  for (int i=0; i<labels.size(); i++){
+    pts[i] = m_pts[m_label_to_index.at(labels[i])];
   }
   return pts;
 };
@@ -123,8 +128,8 @@ const std::vector<double>& Cluster::GetRapidites() const {
 
 const std::vector<double> Cluster::GetRapidites(const std::vector<int>& labels) const {
   std::vector<double> rapidites(labels.size());
-  for (int label : labels){
-    rapidites.push_back(m_rapidites[m_label_to_index.at(label)]);
+  for (int i=0; i<labels.size(); i++){
+    rapidites[i] = m_rapidites[m_label_to_index.at(labels[i])];
   }
   return rapidites;
 };
@@ -135,8 +140,8 @@ const std::vector<double>& Cluster::GetPhis() const {
 
 const std::vector<double> Cluster::GetPhis(const std::vector<int>& labels) const {
   std::vector<double> phis(labels.size());
-  for (int label : labels){
-    phis.push_back(m_phis[m_label_to_index.at(label)]);
+  for (int i=0; i<labels.size(); i++){
+    phis[i] = m_phis[m_label_to_index.at(labels[i])];
   }
   return phis;
 };
@@ -183,7 +188,9 @@ std::vector<int> Cluster::GetNextMerge() const {
 
 void Cluster::DoMerge(std::vector<int> labels){
   int label_new = GetNextFreeLabel();
+  MSG("label_new = " << label_new);
   std::vector<double> kinematics = GetMergedKinematics(labels);
+  PRINT_VECTOR(kinematics);
   DoMerge(labels, label_new, kinematics[0], kinematics[1], kinematics[2], kinematics[3]);
 };
 
@@ -192,6 +199,7 @@ void Cluster::DoMerge(std::vector<int> labels, int label_new,
                       double energy, double pt, double rapidity, double phi){
   // First log the jet completion
   m_completed_labels.push_back(label_new);
+  m_next_free_label = label_new + 1;
   m_completed_constituents.push_back(labels);
   // Then update the listed labels
   m_labels.push_back(label_new);
@@ -220,8 +228,13 @@ void Cluster::DoMerge(std::vector<int> labels, int label_new,
 void Cluster::DoAllMerges(){
   while (!IsFinished()){
     std::vector <int> merge = GetNextMerge();
+    PRINT_VECTOR(merge);
     DoMerge(merge);
   }
+  PRINT_VECTOR(m_labels);
+  PRINT_VECTOR(m_pts);
+  PRINT_VECTOR(m_pzs);
+  PRINT_VECTOR(m_finished);
 };
 
 bool Cluster::IsFinished() const {
