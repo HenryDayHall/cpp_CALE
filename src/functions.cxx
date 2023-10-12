@@ -1,6 +1,16 @@
 #include "functions.hxx"
 #include <math.h>
 
+#include <iostream>
+#define MSG(x) std::cout << __FILE__ << ">" << __LINE__ << "; " << x << std::endl;
+#define PRINT_MATRIX(x) std::cout << __FILE__ << ">" << __LINE__ << "; " << #x << std::endl; \
+  for (auto row : x){ \
+    for (auto element : row){ \
+      std::cout << element << " "; \
+    } \
+    std::cout << std::endl; \
+  }
+
 void Functions::RescaleLaplacian(std::vector<std::vector<double>>& laplacien){
   double scale_factor = 2./2.;
   int size = laplacien.size();
@@ -276,9 +286,8 @@ std::vector<std::vector<double>> Functions::Affinities(
   };
   // Fill in the other half of the triangle by copying
   for (int row_n = 0; row_n < n_particles; row_n++){
-    std::vector<double> row = affinities[row_n];
     for (int col_n = row_n+1; col_n < n_particles; col_n++){
-      row.push_back(affinities[col_n][row_n]);
+      affinities[row_n].push_back(affinities[col_n][row_n]);
     };
   };
   return affinities;
@@ -289,21 +298,28 @@ std::vector<std::vector<double>> Functions::Laplacian(
         const double& sigma, const bool& normalised){
   int n_particles = distances2.size();
   std::vector<std::vector<double>> laplacien = Functions::Affinities(distances2, sigma);
+  MSG( "affinities" );
+  PRINT_MATRIX(laplacien);
   // Unnormalised Laplacien
   for (int row_n = 0; row_n < n_particles; row_n++){
     double sum = 0.;
+    MSG( "" );
     for (int col_n = 0; col_n < n_particles; col_n++){
+      std::cout << laplacien[row_n][col_n] << ", " ;
       sum += laplacien[row_n][col_n];
       laplacien[row_n][col_n] *= -1;
     };
+    std::cout <<  std::endl << sum << std::endl;
     laplacien[row_n][row_n] = sum;
   };
+
 
   if (normalised){
     // Normalised Laplacien
     double diagonal, inv_sqrt_diagonal;
     for (int row_n = 0; row_n < n_particles; row_n++){
       double diagonal = laplacien[row_n][row_n];
+      MSG( "diagonal = " << diagonal );
       if (diagonal == 0.){
         inv_sqrt_diagonal = 0.;
       } else {
