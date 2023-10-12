@@ -9,13 +9,6 @@ class Functions
 {
   public:
 
-    /**
-     * @brief Calculates the maximum eigenvalue of a symmetrix matrix.
-     * @param symmetrix_matrix The symmetrix matrix.
-     * @return The maximum eigenvalue.
-     */
-    static double MaxEigenvalue(const std::vector<std::vector<double>>& symmetrix_matrix);
-
 
     /**
      * @brief Rescale eigenvalues of the laplacien to -1 to 1.

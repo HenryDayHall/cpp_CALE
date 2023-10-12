@@ -33,5 +33,6 @@ target_link_libraries(Sgwj_toy PRIVATE Sgwj_library)
 project(Sgwj_pybind)
 add_subdirectory(pybind11)
 pybind11_add_module(Sgwj_pybind src/bindings.cxx)
+target_link_libraries(Sgwj_pybind PRIVATE Sgwj_library)
 target_compile_definitions(Sgwj_pybind
                            PRIVATE VERSION_INFO=0.0.1)
