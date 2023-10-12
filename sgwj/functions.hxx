@@ -33,7 +33,7 @@ class Functions
      * @param approx_interval_max upper bound of the interval of approximation.
      * @return The Chebyshev coefficients of the kernal.
      **/
-    static std::vector<double> ChebyshevCoefficients(std::vector<double> (*kernal)(const std::vector<double>&),
+    static std::vector<double> ChebyshevCoefficients(double (*kernal)(const double&),
                                               const int& max_coefficients, const int& grid_order=-1,
                                               const double& approx_interval_min=-1.0, const double& approx_interval_max=1.0);
         
@@ -83,23 +83,6 @@ class Functions
      **/
     static void VectorAdditionInPlace(const double& factor1, std::vector<double> vector1,
                                       const double& factor2, const std::vector<double> vector2);
-
-
-    /**
-     * @brief Rescale a matrix by a constant factor.
-     * @param multipler The scale factor.
-     * @param matrix The matrix.  
-     * @return The scaled matrix.
-     **/
-    static std::vector<std::vector<double>> RescaleMatrix(const double& multipler, const std::vector<std::vector<double>>& matrix);
-
-    /**
-     * @brief Rescale a matrix by a constant factor in place.
-     * @param multipler The scale factor.
-     * @param matrix The matrix.
-     **/
-    static void RescaleMatrixInPlace(const double& multipler, std::vector<std::vector<double>>& matrix);
-
 
     /**
      * @brief Dot product between a matrix and a vector
@@ -197,13 +180,12 @@ class Functions
 
     /**
      * @brief Affinity matrix for a set of particles.
-     * @param rapidities The rapidities of the particles.
-     * @param phis The azimuthal angles of the particles.
+     * @param distances2 The distances squared in the chosen metric between particles.
      * @param sigma The sigma in the denominator of the exponent of the affinity.
      * @return The matrix of affinites.
      **/
     static std::vector<std::vector<double>> Affinities(
-        const std::vector<double>& rapidities, const std::vector<double>& phis,
+        const std::vector<std::vector<double>>& distances2,
         const double& sigma);
 
     /**
