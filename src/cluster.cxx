@@ -12,7 +12,8 @@ Cluster::Cluster(const double& sigma, const double& cutoff, const int& n_rounds)
 std::vector<double> Cluster::s_chebyshev_coefficients = Functions::ChebyshevCoefficients(50);
 // The approximation interval is also static
 // Becuase of normalisation, the max eigenvalue is 2., so the interval is [0, 2]
-// TODO why is the interval for coefficients -1 to 1 but the interval for the wavelet is 0 to 2
+// The chebyshev polynomials are defined over -1 to 1, so that range needs to be shifted.
+// See https://inria.hal.science/hal-01943589/document page 23
 std::pair<double, double> Cluster::s_interval = std::make_pair(0., 2.);
 
 

@@ -61,17 +61,132 @@ std::vector<double> Functions::ChebyshevCoefficients(const int& max_coefficients
 };
 
 
-/**
- * @brief Using Chebyshev polynomials, find points with similar eigenvector components to the center_idx.
- * @param laplacian The laplacian.
- * @param chebyshev_coefficients The Chebyshev coefficients.
- * @param center_idx The index to center the approximation around.
- * @param interval The interval to approximate in.
- * @return The approximation of the eigenvalues.
- **/
-std::vector<double> LaplacianWavelet(const std::vector<std::vector<double>> &laplacian, const std::vector<double> &chebyshev_coefficients,
+static std::vector<double> Functions::VectorAddition(const std::vector<double> vector1, const std::vector<double> vector2){
+  int size = vector1.size();
+  std::vector<double> result(size, 0.);
+  for (int i=0; i<size; i++){
+    result[i] = vector1[i] + vector2[i];
+  };
+  return result;
+};
+
+static std::vector<double> Functions::VectorAddition(const double& factor1, const std::vector<double> vector1,
+                                                     const double& factor2, const std::vector<double> vector2){
+  int size = vector1.size();
+  std::vector<double> result(size, 0.);
+  for (int i=0; i<size; i++){
+    result[i] = factor1*vector1[i] + factor2*vector2[i];
+  };
+  return result;
+};
+
+
+static void Functions::VectorAdditionInPlace(std::vector<double> vector1, const std::vector<double> vector2){
+  int size = vector1.size();
+  for (int i=0; i<size; i++){
+    vector1[i] += vector2[i];
+  };
+};
+
+static void Functions::VectorAdditionInPlace(const double& factor1, std::vector<double> vector1,
+                                             const double& factor2, const std::vector<double> vector2){
+  int size = vector1.size();
+  for (int i=0; i<size; i++){
+    vector1[i] *= factor1;
+    vector1[i] += factor2 * vector2[i];
+  };
+};
+
+
+void Functions::RescaleMatrixInPlace(const double& multipler, std::vector<std::vector<double>>& matrix){
+  int n_rows = matrix.size();
+  for (int row=0; row<n_rows; row++){
+    int n_cols = matrix[row].size();
+    for (int col=0; col<n_cols; col++){
+      matrix[row][col] *= multipler;
+    };
+  };
+};
+
+static std::vector<std::vector<double>> Functions::RescaleMatrix(const double& multipler, const std::vector<std::vector<double>>& matrix){
+  int n_rows = matrix.size();
+  std::vector<std::vector<double>> result(n_rows, std::vector<double>());
+  for (int row=0; row<n_rows; row++){
+    int n_cols = matrix[row].size();
+    for (int col=0; col<n_cols; col++){
+      result[row].push_back(matrix[row][col] * multipler);
+    };
+  };
+  return result;
+};
+
+static std::vector<double> Functions::MatrixDotVector(const std::vector<std::vector<double>>& matrix,
+                                                      const std::vector<double>& vector){
+  int size = matrix.size();
+  std::vector<double> result(size, 0.);
+  for (int row=0; row<size; row++){
+    for (int col=0; col<size; col++){
+      result[row] += matrix[row][col] * vector[col];
+    };
+  };
+  return result;
+};
+
+std::vector<double> Functions::LaplacianWavelet(const std::vector<std::vector<double>> &laplacian, const std::vector<double> &chebyshev_coefficients,
                                      const int& center_idx, const std::pair<double, double>& interval) const {
-  //TODO
+  int n_rows = laplacian.size();
+  // An all zero laplacian is a special case
+  bool all_zero = true;
+  for (int row = 0; row < n_rows; row++) {
+    for (int col = 0; col < n_rows; col++) {
+      if (laplacian[row][col] != 0.) {
+        all_zero = false;
+        break;
+      };
+    };
+    if (!all_zero) break;
+  };
+  if (all_zero) {
+    std::vector<double> result(n_rows, 0.);
+    return result;
+  };
+
+  // Note, while this takes the place of make_wavelets, it's mostly cheby_op, as the starting point is the chebyshev coefficients.
+  // basically equation 66 of https://inria.hal.science/hal-01943589/document
+  int n_coeffients = chebyshev_coefficients.size();
+  double half_interval = (interval.second - interval.first)/2.;
+  double inverse_half_interval = 1./half_interval;
+  double inverse_interval = 2./half_interval;
+  double center = (interval.second + interval.first)/2.;
+  // We will need two vectors for taking repeated dot products onto the laplacian
+  // Last iteration
+  std::vector<double> fourier_transform_old(n_rows, 0.);
+  fourier_transform_old[center_idx] = 1.;
+  // Current iteration
+  std::vector<double> fourier_transform_new = VectorAddition(MatrixDotVector(Laplacian, fourier_transform_old),
+                                                             RescaleMatrix(-center, fourier_transform_old))
+  RescaleMatrixInPlace(inverse_half_interval, fourier_transform_new);
+  // Placeholder for swapping them
+  std::vector<double> fourier_transform_placeholder(n_rows, 0.);
+
+  // We also need a place to store the growing sum
+  std::vector<double> results = VectorAddition(RescaleMatrix(0.5*chebyshev_coefficients[0], fourier_transform_old),
+                                               RescaleMatrix(chebyshev_coefficients[1], fourier_transform_new));
+
+  for (int k=2; k < n_coeffients; k++){
+    // update the old fourier transform to make a new one
+    VectorAdditionInPlace(-1, fourier_transform_old, inverse_interval,
+                          VectorAddition(1, MatrixDotVector(Laplacian, fourier_transform_new),
+                                         -center, fourier_transform_new));
+    // switch the old and new fourier transforms
+    fourier_transform_placeholder = fourier_transform_old;
+    fourier_transform_old = fourier_transform_new;
+    fourier_transform_new = fourier_transform_placeholder;
+    // update the results
+    VectorAdditionInPlace(1, results, chebyshev_coefficients[k], fourier_transform_new);
+  };
+
+  return results;
 }
 
 

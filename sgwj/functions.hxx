@@ -48,6 +48,66 @@ class Functions
     static std::vector<double> ChebyshevCoefficients(const int& max_coefficients, const int& grid_order=-1,
                                               const double& approx_interval_min=-1.0, const double& approx_interval_max=1.0);
 
+    /**
+     * @brief Sum two vectors.
+     * @param vector1 The first vector.
+     * @param vector2 The second vector.
+     * @return vector1 + vector2.
+     **/
+    static std::vector<double> VectorAddition(const std::vector<double> vector1, const std::vector<double> vector2);
+
+    /**
+     * @brief Sum two vectors with rescaling.
+     * @param factor1 The factor to multiply vector1 by.
+     * @param vector1 The first vector.
+     * @param factor2 The factor to multiply vector2 by.
+     * @param vector2 The second vector.
+     * @return vector1 + vector2.
+     **/
+    static std::vector<double> VectorAddition(const double& factor1, const std::vector<double> vector1,
+                                              const double& factor2, const std::vector<double> vector2);
+
+    /**
+     * @brief Sum two vectors in place.
+     * @param vector1 The first vector, which will be altered.
+     * @param vector2 The second vector, which will be subtracted from the first.
+     **/
+    static void VectorAdditionInPlace(std::vector<double> vector1, const std::vector<double> vector2);
+
+    /**
+     * @brief Sum two vectors in place.
+     * @param factor1 The factor to multiply vector1 by.
+     * @param vector1 The first vector, which will be altered.
+     * @param factor2 The factor to multiply vector2 by.
+     * @param vector2 The second vector, which will be subtracted from the first.
+     **/
+    static void VectorAdditionInPlace(const double& factor1, std::vector<double> vector1,
+                                      const double& factor2, const std::vector<double> vector2);
+
+
+    /**
+     * @brief Rescale a matrix by a constant factor.
+     * @param multipler The scale factor.
+     * @param matrix The matrix.  
+     * @return The scaled matrix.
+     **/
+    static std::vector<std::vector<double>> RescaleMatrix(const double& multipler, const std::vector<std::vector<double>>& matrix);
+
+    /**
+     * @brief Rescale a matrix by a constant factor in place.
+     * @param multipler The scale factor.
+     * @param matrix The matrix.
+     **/
+    static void RescaleMatrixInPlace(const double& multipler, std::vector<std::vector<double>>& matrix);
+
+
+    /**
+     * @brief Dot product between a matrix and a vector
+     * @param matrix The matrix.
+     * @param vector The vector.
+     * @return The dot product.
+     **/
+    static std::vector<double> MatrixDotVector(const std::vector<std::vector<double>>& matrix, const std::vector<double>& vector);
 
     /**
      * @brief Using Chebyshev polynomials, find points with similar eigenvector components to the center_idx.
