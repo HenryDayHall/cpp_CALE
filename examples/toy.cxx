@@ -8,8 +8,8 @@ int main(){
   std::vector<int> labels = {0, 1, 2, 3, 4};
   std::vector<double> energies = {10, 10, 10, 10, 10};
   std::vector<double> pts = {10, 10, 10, 10, 10};
-  std::vector<double> rapidites = {0.1, 0.2, 0.3, 0.4, 0.5};
-  std::vector<double> phis = {0.1, 0.2, 0.3, 0.4, 0.5};
+  std::vector<double> rapidites = {0.1, 0.1, 0.3, 0.4, 0.4};
+  std::vector<double> phis = {0.1, 0.1, 0.3, 0.4, 0.4};
 
   my_algo.SetInputs(labels, energies, pts, rapidites, phis);
 

@@ -57,7 +57,6 @@ void Cluster::SetInputs(std::vector<int> labels,
     }
     // Calculate the px, py, pz of each particle
     std::vector<double> pxpypx = Functions::PxPyPz(energies[i], pts[i], rapidites[i], phis[i]);
-    MSG( "pxpypz = " << pxpypx[0] << ", " << pxpypx[1] << ", " << pxpypx[2] );
     m_pxs.push_back(pxpypx[0]);
     m_pys.push_back(pxpypx[1]);
     m_pzs.push_back(pxpypx[2]);
@@ -71,21 +70,15 @@ void Cluster::SetInputs(std::vector<int> labels,
   // Calculate the laplacian
   m_distances = Functions::NamedDistanceMatrix(m_pts, m_rapidites, m_phis,
                                                    Functions::antikt);
-  MSG( "m_distance" );
-  PRINT_MATRIX(m_distances);
   m_laplacian = Functions::Laplacian(m_distances, m_sigma, true);
-  MSG( "m_laplacian" );
-  PRINT_MATRIX(m_laplacian);
   // Check the max number of jets
   m_max_jets = m_n_rounds < n_labels ? m_n_rounds : n_labels;
-  MSG("m_max_jets " << m_max_jets);
   // Decide on the seed order
   std::vector<double> summed_distances = std::vector<double>(n_labels, 0.);
   for (int i=0; i<n_labels; i++){
     for (int j=0; j<n_labels; j++){
       summed_distances[i] += m_distances[i][j];
     }
-    MSG("summed_distances[" << i << "] = " << summed_distances[i]);
   }
   m_seed_indices = std::vector<int>(n_labels);
 
@@ -188,9 +181,7 @@ std::vector<int> Cluster::GetNextMerge() const {
 
 void Cluster::DoMerge(std::vector<int> labels){
   int label_new = GetNextFreeLabel();
-  MSG("label_new = " << label_new);
   std::vector<double> kinematics = GetMergedKinematics(labels);
-  PRINT_VECTOR(kinematics);
   DoMerge(labels, label_new, kinematics[0], kinematics[1], kinematics[2], kinematics[3]);
 };
 
@@ -228,13 +219,8 @@ void Cluster::DoMerge(std::vector<int> labels, int label_new,
 void Cluster::DoAllMerges(){
   while (!IsFinished()){
     std::vector <int> merge = GetNextMerge();
-    PRINT_VECTOR(merge);
     DoMerge(merge);
   }
-  PRINT_VECTOR(m_labels);
-  PRINT_VECTOR(m_pts);
-  PRINT_VECTOR(m_pzs);
-  PRINT_VECTOR(m_finished);
 };
 
 bool Cluster::IsFinished() const {

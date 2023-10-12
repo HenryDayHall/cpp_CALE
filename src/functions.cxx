@@ -298,18 +298,13 @@ std::vector<std::vector<double>> Functions::Laplacian(
         const double& sigma, const bool& normalised){
   int n_particles = distances2.size();
   std::vector<std::vector<double>> laplacien = Functions::Affinities(distances2, sigma);
-  MSG( "affinities" );
-  PRINT_MATRIX(laplacien);
   // Unnormalised Laplacien
   for (int row_n = 0; row_n < n_particles; row_n++){
     double sum = 0.;
-    MSG( "" );
     for (int col_n = 0; col_n < n_particles; col_n++){
-      std::cout << laplacien[row_n][col_n] << ", " ;
       sum += laplacien[row_n][col_n];
       laplacien[row_n][col_n] *= -1;
     };
-    std::cout <<  std::endl << sum << std::endl;
     laplacien[row_n][row_n] = sum;
   };
 
@@ -319,7 +314,6 @@ std::vector<std::vector<double>> Functions::Laplacian(
     double diagonal, inv_sqrt_diagonal;
     for (int row_n = 0; row_n < n_particles; row_n++){
       double diagonal = laplacien[row_n][row_n];
-      MSG( "diagonal = " << diagonal );
       if (diagonal == 0.){
         inv_sqrt_diagonal = 0.;
       } else {
