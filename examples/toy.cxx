@@ -20,16 +20,16 @@ int main(){
 
   int n_jets = completed_jets.size();
   std::cout << "There are " << n_jets << " jets." << std::endl;
-  std::vector<const double> jet_energies = *my_algo.GetEnergies(completed_jets);
-  std::vector<const double> jet_pts = *my_algo.GetPts(completed_jets);
-  std::vector<const double> jet_rapidites = *my_algo.GetRapidities(completed_jets);
-  std::vector<const double> jet_phis = *my_algo.GetPhis(completed_jets);
+  const std::vector<double> jet_energies = my_algo.GetEnergies(completed_jets);
+  const std::vector<double> jet_pts = my_algo.GetPts(completed_jets);
+  const std::vector<double> jet_rapidites = my_algo.GetRapidites(completed_jets);
+  const std::vector<double> jet_phis = my_algo.GetPhis(completed_jets);
   for (int jet_n = 0; jet_n < n_jets; jet_n++){
     std::cout << "Jet " << jet_n << " (" << jet_energies[jet_n] << ", " << jet_pts[jet_n] << ", " << jet_rapidites[jet_n] << ", " << jet_phis[jet_n] << ") has constituents: " << std::endl;
-    std::vector<const double> constitutent_energies = *my_algo.GetEnergies(constituents[jet_n]);
-    std::vector<const double> constitutent_pts = *my_algo.GetPts(constituents[jet_n]);
-    std::vector<const double> constitutent_rapidites = *my_algo.GetRapidities(constituents[jet_n]);
-    std::vector<const double> constitutent_phis = *my_algo.GetPhis(constituents[jet_n]);
+    const std::vector<double> constitutent_energies = my_algo.GetEnergies(constituents[jet_n]);
+    const std::vector<double> constitutent_pts = my_algo.GetPts(constituents[jet_n]);
+    const std::vector<double> constitutent_rapidites = my_algo.GetRapidites(constituents[jet_n]);
+    const std::vector<double> constitutent_phis = my_algo.GetPhis(constituents[jet_n]);
     for (int i = 0; i < constituents[jet_n].size(); i++){
       std::cout << "  (" << constitutent_energies[i] << ", " << constitutent_pts[i] << ", " << constitutent_rapidites[i] << ", " << constitutent_phis[i] << ")" << std::endl;
     }
