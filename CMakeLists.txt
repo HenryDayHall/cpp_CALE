@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.4...3.18)
 project(Sgwj_library)
 
 # Useful definitions
@@ -29,3 +29,9 @@ add_executable(Sgwj_toy examples/toy.cxx)
 # Link it to the library
 target_link_libraries(Sgwj_toy PRIVATE Sgwj_library)
 
+# Now create python bindings
+project(Sgwj_pybind)
+add_subdirectory(pybind11)
+pybind11_add_module(Sgwj_pybind src/bindings.cxx)
+target_compile_definitions(Sgwj_pybind
+                           PRIVATE VERSION_INFO=0.0.1)
