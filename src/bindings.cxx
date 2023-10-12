@@ -140,6 +140,10 @@ PYBIND11_MODULE(Sgwj_pybind, m) {
         py::arg("pts"), py::arg("rapidities"), py::arg("phis"), py::arg("exponent")
         );
 
+    py::enum_<Functions::JetMetrics>(m, "JetMetrics")
+        .value("cambridge_aachen", Functions::JetMetrics::cambridge_aachen)
+        .value("kt", Functions::JetMetrics::kt)
+        .value("antikt", Functions::JetMetrics::antikt);
 
     m.def("NamedDistance", &Functions::NamedDistance, R"pbdoc(
      * @brief Distance between two particles in a named jet metric.
@@ -155,7 +159,6 @@ PYBIND11_MODULE(Sgwj_pybind, m) {
         py::arg("pt1"), py::arg("rapidity1"), py::arg("phi1"), py::arg("pt2"), py::arg("rapidity2"), py::arg("phi2"), py::arg("metric")
         );
 
-   // TODO how to convert the enum to python?
     m.def("NamedDistanceMatrix", &Functions::NamedDistanceMatrix, R"pbdoc(
      * @brief Distance matrix between a set of particles in a named jet metric.
      * @param pts The transverse momenta of the particles.
