@@ -2,38 +2,27 @@
 
 #include <pybind11/stl.h>
 #include "functions.hxx"
+#include "cluster.hxx"
 
 #define STRINGIFY(x) #x
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(Sgwj_pybind, m) {
+PYBIND11_MODULE(sgwj_pybind, m) {
     m.doc() = R"pbdoc(
         Pybind11 example plugin
         -----------------------
 
-        .. currentmodule:: Sgwj_pybind
+        .. currentmodule:: sgwj_pybind
 
         .. autosummary::
            :toctree: _generate
 
-           PxPyPz
-           subtract
     )pbdoc";
 
 
-  /*
-    m.def("MaxEigenvalue", &Functions::MaxEigenvalue, R"pbdoc(
-     * @brief Calculates the maximum eigenvalue of a symmetrix matrix.
-     * @param symmetrix_matrix The symmetrix matrix.
-     * @return The maximum eigenvalue.
-     )pbdoc",
-        py::arg("symmetrix_matrix")
-        );
-        */
-
-
+  // Functions ~~~~~~~~~~~~~~~~~~~~~~
     m.def("ChebyshevCoefficients",
     py::overload_cast<const int&, const int&, const double&, const double&>(&Functions::ChebyshevCoefficients),
         R"pbdoc(
@@ -190,11 +179,6 @@ PYBIND11_MODULE(Sgwj_pybind, m) {
         );
 
 
-    m.def("subtract", [](int i, int j) { return i - j; }, R"pbdoc(
-        Subtract two numbers
-
-        Some other explanation about the subtract function.
-    )pbdoc");
     m.def("PxPyPz", &Functions::PxPyPz, R"pbdoc(
      * @brief From detector coordinates, calculate cartesien coordinates
      * @param energy The energy.
@@ -216,6 +200,37 @@ PYBIND11_MODULE(Sgwj_pybind, m) {
      )pbdoc",
         py::arg("energy"), py::arg("px"), py::arg("py"), py::arg("pz")
         );
+
+  // Cluster ~~~~~~~~~~~~~~~~~
+
+    py::class_<Cluster>(m, "Cluster")
+        .def(py::init<const double&, const double&, const int&>(),
+            R"pbdoc(
+     * @brief Constructor for a clustering algorithm.
+     *
+     * @param sigma
+     * @param cutoff
+     * @param n_rounds
+     )pbdoc",
+            py::arg("sigma"), py::arg("cutoff"), py::arg("n_rounds")
+            )
+    .def("SetInputs", &Cluster::SetInputs,
+        R"pbdoc(
+     * @brief Chose a new set of particles to start clustering.   
+     *
+     * @param labels labels of the particles to be clustered
+     * @param energies energies of the particles to be clustered
+     * @param pts transverse momenta of the particles to be clustered
+     * @param rapidites rapidities of the particles to be clustered
+     * @param phis azimuthal angles of the particles to be clustered
+     )pbdoc",
+        py::arg("labels"),
+        py::arg("energies"),
+        py::arg("pts"),
+        py::arg("rapidites"),
+        py::arg("phis")
+        );
+
 
 
 #ifdef VERSION_INFO

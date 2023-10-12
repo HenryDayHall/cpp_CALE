@@ -30,9 +30,9 @@ add_executable(Sgwj_toy examples/toy.cxx)
 target_link_libraries(Sgwj_toy PRIVATE Sgwj_library)
 
 # Now create python bindings
-project(Sgwj_pybind)
+project(sgwj_pybind)
 add_subdirectory(pybind11)
-pybind11_add_module(Sgwj_pybind src/bindings.cxx)
-target_link_libraries(Sgwj_pybind PRIVATE Sgwj_library)
-target_compile_definitions(Sgwj_pybind
+pybind11_add_module(sgwj_pybind src/bindings.cxx)
+target_link_libraries(sgwj_pybind PRIVATE Sgwj_library)
+target_compile_definitions(sgwj_pybind
                            PRIVATE VERSION_INFO=0.0.1)

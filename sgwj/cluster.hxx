@@ -9,7 +9,7 @@ class Cluster
 {
   public:
     /**
-     * @brief Constructor
+     * @brief Constructor for a clustering algorithm.
      *
      * @param sigma
      * @param cutoff
