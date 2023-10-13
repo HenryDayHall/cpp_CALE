@@ -233,7 +233,7 @@ bool Cluster::IsFinished() const {
   return std::none_of(m_avaliable.begin(), m_avaliable.end(), [](bool v) { return v; });
 };
 
-std::vector<int> Cluster::GetJets() const {
+const std::vector<int>& Cluster::GetJets() const {
   return m_completed_labels;
 };
 

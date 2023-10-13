@@ -103,6 +103,7 @@ class Cluster
      * provided label and kinematics.
      *
      * @param labels labels of the pseudojets to merge
+     * @param label_new label of the new jet
      * @param energy energy of the new jet
      * @param pt transverse momentum of the new jet
      * @param rapidity rapidity of the new jet
@@ -131,7 +132,7 @@ class Cluster
      *
      * @return each item in the vector is the label or one completed jet.
      **/
-    std::vector<int> GetJets() const;
+    const std::vector<int>& GetJets() const;
     /**
      * @brief Get a list of particles in each jet.
      *
