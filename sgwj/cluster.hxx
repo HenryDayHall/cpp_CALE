@@ -245,6 +245,15 @@ class Cluster
     std::vector<std::vector<int>> m_completed_constituents;
 
     /**
+     * @brief An object to form a junk jet.
+     * This is chosen as the next object that is avaliable.
+     * The assumption is that all real jets have been formed.
+     * If there are no available objects returns an empty vector.
+     * @return vector of the label of the object to be used as a junk jet
+     **/
+    std::vector<int> GetSingleAvaliable() const;
+
+    /**
      * @brief Calculate the kinematics of merging multiple jets.
      * @param labels labels of the jets to merge
      * @return vector of kinematics, energy, pt, rapidity, phi
@@ -253,11 +262,12 @@ class Cluster
 
     /**
      * @brief Get the index of the object to be used as a seed.
+     * If there are no seeds avaliable, returns -1.
      * @param start_seed_idx index of the seed to start from,
      *                      normally, the number of jets is a good choice
      *                      but sometimes nothing is captured by a wavlet, so the next
      *                      seed should be used.
-     * @return internal index of the seed
+     * @return internal index of the seed, or -1 if none avaliable
      **/
     int GetSeed(int start_seed_idx) const;
 
@@ -265,6 +275,10 @@ class Cluster
      * @brief Ordered list of indices to use as seeds
      **/
     std::vector<int> m_seed_indices;
+    /**
+     * @brief Total number of seeds.
+     **/
+    int m_n_seed_indices;
 };
 
 #endif // CLUSTER_HXX

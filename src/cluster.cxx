@@ -3,6 +3,7 @@
 #include <cassert>
 #include <algorithm>
 #include <numeric>
+#include <stdexcept>
 
 #include <iostream>
 #define MSG(x) std::cout << __FILE__ << ">" << __LINE__ << "; " << x << std::endl;
@@ -81,6 +82,7 @@ void Cluster::SetInputs(std::vector<int> labels,
     }
   }
   m_seed_indices = std::vector<int>(n_labels);
+  m_n_seed_indices = m_seed_indices.size();
 
   std::iota(m_seed_indices.begin(), m_seed_indices.end(), 0);
   std::sort(m_seed_indices.begin(), m_seed_indices.end(),
@@ -142,18 +144,39 @@ const std::vector<double> Cluster::GetPhis(const std::vector<int>& labels) const
 int Cluster::GetSeed(int start_seed_idx) const {
   // The seed idx must be at least the number of completed jets in
   int idx = start_seed_idx;
+  if (idx >= m_n_seed_indices){
+    return -1;
+  }
   while (m_avaliable[m_seed_indices[idx]] == false){
     idx++;
+    if (idx >= m_n_seed_indices){
+      return -1;
+    }
   }  
   return m_seed_indices[idx];
+};
+
+std::vector<int> Cluster::GetSingleAvaliable() const{
+  for (int i=0; i<m_avaliable.size(); i++){
+    if (m_avaliable[i] == true){
+      return {m_labels[i]};
+    }
+  }
+  return {};
 };
 
 
 std::vector<int> Cluster::GetNextMerge() const {
   std::vector<int> labels;
   int start_seed_idx = m_completed_labels.size();
-  int seed = this->GetSeed(start_seed_idx);
+  int seed;  // Get inside the loop so we update if a seed doesn't work
   while (labels.size() == 0){
+    seed = this->GetSeed(start_seed_idx);
+    if (seed == -1){
+      // We have done all the real clustering,
+      // just return the first avaliable as a junk jet.
+      return GetSingleAvaliable();
+    }
     // Decide what is close to the seed
     std::vector<double> wavelets = Functions::LaplacianWavelet(m_laplacian, 
                                                                Cluster::s_chebyshev_coefficients,
