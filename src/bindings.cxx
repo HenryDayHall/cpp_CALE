@@ -11,8 +11,9 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(sgwj_pybind, m) {
     m.doc() = R"pbdoc(
-        Pybind11 example plugin
+        Spectral Graph Wavelet Jets
         -----------------------
+        Written in c++, bound in python for your convenience.
 
         .. currentmodule:: sgwj_pybind
 
