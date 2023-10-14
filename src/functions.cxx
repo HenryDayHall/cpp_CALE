@@ -180,7 +180,9 @@ std::vector<double> Functions::LaplacianWavelet(const std::vector<std::vector<do
 
 double Functions::AngularDistance(const double& phi1, const double& phi2){
   // taking the differnce between two angles requires careful treatment
-  return std::min(std::abs(phi1 - phi2), 2*M_PI - std::abs(phi1 - phi2));
+  double delta_phi = std::abs(phi1 - phi2);
+  double two_pi = 2*M_PI;
+  return std::min(fmod(delta_phi, two_pi), fmod((two_pi - delta_phi), two_pi));
 };
 
 
