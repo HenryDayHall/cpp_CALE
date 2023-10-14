@@ -21,8 +21,13 @@ def build(build_dir = "./build", force_rebuild = False):
     os.system("make -j4")
     return build_dir
 
+sgwj_pybind = None
+
 
 def get_module(build_dir):
+    global sgwj_pybind
+    if sgwj_pybind is not None:
+        return sgwj_pybind
     # add the build directory to the PYTHONPATH
     sys.path.append(build_dir)
     # import the python bindings

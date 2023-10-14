@@ -198,7 +198,7 @@ double Functions::GeneralisedKtDistance(const double& pt1, const double& rapidit
                                         const double& pt2, const double& rapidity2, const double& phi2,
                                         const double& exponent){
   double ca_distance2 = CambridgeAachenDistance2(rapidity1, phi1, rapidity2, phi2);
-  return std::pow(std::min(pt1, pt2), exponent) * std::sqrt(ca_distance2);
+  return std::min(std::pow(pt1, exponent), std::pow(pt2, exponent)) * std::sqrt(ca_distance2);
 };
 
 std::vector<std::vector<double>> Functions::GeneralisedKtDistanceMatrix(const std::vector<double>& pts,
