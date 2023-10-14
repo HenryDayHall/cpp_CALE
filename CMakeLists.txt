@@ -5,6 +5,9 @@ project(Sgwj_library)
 set(PROJECT_HEADER_DIR ${CMAKE_SOURCE_DIR}/sgwj)
 set(PROJECT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 
+# the CMakeFlags for a library"
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+
 set(PROJECT_HEADERS 
     ${PROJECT_HEADER_DIR}/cluster.hxx
     ${PROJECT_HEADER_DIR}/functions.hxx

@@ -15,6 +15,8 @@ def build(build_dir = "./build", force_rebuild = False):
     # This file is in the location of the project root
     this_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(build_dir)
+    if force_rebuild:
+        os.system("make clean")
     os.system("cmake " + this_dir)
     os.system("make -j4")
     return build_dir
