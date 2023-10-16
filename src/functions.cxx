@@ -24,6 +24,10 @@ void Functions::RescaleLaplacian(std::vector<std::vector<double>>& laplacien){
 
 /**
  * @brief Compute Chebyshev coefficients of a kernal.
+ * The kernal is a function we want to approximate in the interval
+ * specified.
+ * The coefficientes returned are the values we would need to multiply the
+ * chebyshev series by to approximate this function.
  * @param kernal The kernal to compute the coefficients of.
  * @param max_coefficients The number of coefficients to compute.
  * @param grid_order The order of the grid to use. If -1, then max_coefficients+1 is used.
@@ -34,17 +38,32 @@ void Functions::RescaleLaplacian(std::vector<std::vector<double>>& laplacien){
 std::vector<double> Functions::ChebyshevCoefficients(double (*kernal)(const double&),
                                           const int& max_coefficients, const int& grid_order,
                                           const double& approx_interval_min, const double& approx_interval_max){
+  /**
+   * Formula;
+   * Let f(x) be a smooth function between -1 and 1
+   * Let T_n(x) be the nth chebyshev polynomial
+   * Where T_0(x) = 1
+   *       T_1(x) = x
+   *       T_n(x) = 2xT_{n-1}(x) - T_{n-2}(x)
+   * We seek the coefficients a_n such that
+   * f(x) = sum_{n=0}^{m} a_n T_n(x)
+   *
+   * They are approximated by
+   * a_n = ((2 - delta(0, n))/N) * sum_{k=0}^{N-1} f(cos(pi*(k+0.5)/N)) * T_n(cos(pi*(k+0.5)/N))
+   * with a perfect approximation when N -> infinity
+   **/
   double _grid_order = grid_order;
   if (grid_order == -1){
     _grid_order = max_coefficients + 1;
   };
+
   double half_interval = (approx_interval_max - approx_interval_min)/2.;
   double center = (approx_interval_max + approx_interval_min)/2.;
   double grid_value, kernal_value;
   std::vector<double> grid;
   std::vector<double> kernal_values;
   double pi_over_grid_order = M_PI/_grid_order;
-  for (int i=1; i<_grid_order+1; i++){
+  for (float i=1; i<_grid_order+1; i++){
     grid_value = (i - 0.5) * pi_over_grid_order;
     grid.push_back(grid_value);
     kernal_value = kernal(half_interval * std::cos(grid_value) + center);
@@ -53,13 +72,14 @@ std::vector<double> Functions::ChebyshevCoefficients(double (*kernal)(const doub
   double coefficient_value;
   std::vector<double> chebyshev_coefficients;
   double two_over_grid_order = 2./_grid_order;
-  for (int i=0; i<_grid_order+1; i++){
+  for (int i=0; i<max_coefficients+1; i++){
     coefficient_value = 0.;
     for (int j=0; j<_grid_order; j++){
-      coefficient_value += kernal_values[j] * std::cos(grid[i] * j) * two_over_grid_order;
+      coefficient_value += kernal_values[j] * std::cos(grid[j] * i);
     };
-    chebyshev_coefficients.push_back(coefficient_value);
+    chebyshev_coefficients.push_back(two_over_grid_order * coefficient_value);
   };
+  chebyshev_coefficients[0] /= 2.;
 
   return chebyshev_coefficients;
 };

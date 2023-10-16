@@ -19,6 +19,10 @@ class Functions
 
     /**
      * @brief Compute Chebyshev coefficients of a kernal.
+     * The kernal is a function we want to approximate in the interval
+     * specified.
+     * The coefficientes returned are the values we would need to multiply the
+     * chebyshev series by to approximate this function.
      * @param kernal The kernal to compute the coefficients of.
      * @param max_coefficients The number of coefficients to compute.
      * @param grid_order The order of the grid to use. If -1, then max_coefficients+1 is used.
@@ -32,6 +36,8 @@ class Functions
         
     /**
      * @brief Compute Chebyshev coefficients of a negative exponent kernal.
+     * The coefficientes returned are the values we would need to multiply the
+     * chebyshev series by to approximate this exp(-x)
      * @param max_coefficients The number of coefficients to compute.
      * @param grid_order The order of the grid to use. If -1, then max_coefficients+1 is used.
      * @param approx_interval_min lower bound of the interval of approximation.

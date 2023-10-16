@@ -9,6 +9,8 @@
 
 namespace py = pybind11;
 
+std::vector<std::vector<float>> empty_matrix_for_testing = {};
+
 PYBIND11_MODULE(sgwj_pybind, m) {
     m.doc() = R"pbdoc(
         Spectral Graph Wavelet Jets
