@@ -173,6 +173,7 @@ class Functions
 
     /**
      * @brief Affinity matrix for a set of particles.
+     * Assumes distance2 is symmetric.
      * @param distances2 The distances squared in the chosen metric between particles.
      * @param sigma The sigma in the denominator of the exponent of the affinity.
      * @return The matrix of affinites.

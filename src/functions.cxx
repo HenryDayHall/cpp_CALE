@@ -235,7 +235,7 @@ double Functions::NamedDistance(const double& pt1, const double& rapidity1, cons
                                 const JetMetrics& metric){
   switch (metric) {
     case cambridge_aachen:
-      return CambridgeAachenDistance2(rapidity1, phi1, rapidity2, phi2);
+      return std::sqrt(CambridgeAachenDistance2(rapidity1, phi1, rapidity2, phi2));
     case kt:
       return GeneralisedKtDistance(pt1, rapidity1, phi1, pt2, rapidity2, phi2, 1.);
     case antikt:
@@ -327,8 +327,6 @@ std::vector<std::vector<double>> Functions::Laplacian(
       };
     };
   };
-
-  //Functions::RescaleLaplacian(laplacien);
 
   return laplacien;
 };
