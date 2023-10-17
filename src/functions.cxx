@@ -3,6 +3,11 @@
 
 #include <iostream>
 #define MSG(x) std::cout << __FILE__ << ">" << __LINE__ << "; " << x << std::endl;
+#define PRINT_VECTOR(x) std::cout << __FILE__ << ">" << __LINE__ << "; " << #x << std::endl; \
+  for (auto element : x){ \
+    std::cout << element << " "; \
+  } \
+  std::cout << std::endl;
 #define PRINT_MATRIX(x) std::cout << __FILE__ << ">" << __LINE__ << "; " << #x << std::endl; \
   for (auto row : x){ \
     for (auto element : row){ \
@@ -112,15 +117,15 @@ std::vector<double> Functions::VectorAddition(const double& factor1, const std::
 };
 
 
-void Functions::VectorAdditionInPlace(std::vector<double> vector1, const std::vector<double> vector2){
+void Functions::VectorAdditionInPlace(std::vector<double>& vector1, const std::vector<double>& vector2){
   int size = vector1.size();
   for (int i=0; i<size; i++){
     vector1[i] += vector2[i];
   };
 };
 
-void Functions::VectorAdditionInPlace(const double& factor1, std::vector<double> vector1,
-                                             const double& factor2, const std::vector<double> vector2){
+void Functions::VectorAdditionInPlace(const double& factor1, std::vector<double>& vector1,
+                                             const double& factor2, const std::vector<double>& vector2){
   int size = vector1.size();
   for (int i=0; i<size; i++){
     vector1[i] *= factor1;
@@ -172,8 +177,9 @@ std::vector<double> Functions::LaplacianWavelet(const std::vector<std::vector<do
   std::vector<double> fourier_transform_old(n_rows, 0.);
   fourier_transform_old[center_idx] = 1.;
   // Current iteration
-  std::vector<double> fourier_transform_new = VectorAddition(inverse_half_interval, MatrixDotVector(laplacian, fourier_transform_old),
-                                                             -center*inverse_half_interval, fourier_transform_old);
+  std::vector<double> fourier_transform_new = VectorAddition(
+      inverse_half_interval, MatrixDotVector(laplacian, fourier_transform_old),
+      -center*inverse_half_interval, fourier_transform_old);
   // Placeholder for swapping them
   std::vector<double> fourier_transform_placeholder(n_rows, 0.);
 

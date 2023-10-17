@@ -71,7 +71,7 @@ class Functions
      * @param vector1 The first vector, which will be altered.
      * @param vector2 The second vector, which will be subtracted from the first.
      **/
-    static void VectorAdditionInPlace(std::vector<double> vector1, const std::vector<double> vector2);
+    static void VectorAdditionInPlace(std::vector<double>& vector1, const std::vector<double>& vector2);
 
     /**
      * @brief Sum two vectors in place.
@@ -80,8 +80,8 @@ class Functions
      * @param factor2 The factor to multiply vector2 by.
      * @param vector2 The second vector, which will be subtracted from the first.
      **/
-    static void VectorAdditionInPlace(const double& factor1, std::vector<double> vector1,
-                                      const double& factor2, const std::vector<double> vector2);
+    static void VectorAdditionInPlace(const double& factor1, std::vector<double>& vector1,
+                                      const double& factor2, const std::vector<double>& vector2);
 
     /**
      * @brief Dot product between a matrix and a vector
