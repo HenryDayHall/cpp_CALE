@@ -45,7 +45,7 @@ class Functions
      * @return The Chebyshev coefficients of the kernal.
      **/
     static std::vector<double> ChebyshevCoefficients(const int& max_coefficients, const int& grid_order=-1,
-                                              const double& approx_interval_min=-1.0, const double& approx_interval_max=1.0);
+                                              const double& approx_interval_min=0.0, const double& approx_interval_max=2.0);
 
     /**
      * @brief Sum two vectors.
@@ -122,7 +122,7 @@ class Functions
                                     const double& rapidity2, const double& phi2);
 
     /**
-     * @brief Distance between two particles in the Generalised-Kt metric.
+     * @brief Distance squared between two particles in the Generalised-Kt metric.
      * @param pt1 The transverse momentum of the first particle.
      * @param rapidity1 The rapidity of the first particle.
      * @param phi1 The azimuthal angle of the first particle.
@@ -130,28 +130,29 @@ class Functions
      * @param rapidity2 The rapidity of the second particle.
      * @param phi2 The azimuthal angle of the second particle.
      * @param the exponent of the metric.
-     * @return The distance between the two particles.
+     * @return The distance squared between the two particles.
      **/
-    static double GeneralisedKtDistance(const double& pt1, const double& rapidity1, const double& phi1, 
+    static double GeneralisedKtDistance2(const double& pt1, const double& rapidity1, const double& phi1, 
                                  const double& pt2, const double& rapidity2, const double& phi2,
                                  const double& exponent);
 
     /**
-     * @brief Distance matrix between a set of particles in the Generalised-Kt metric.
+     * @brief Distance squared matrix between a set of particles in the Generalised-Kt metric.
+     * Note, the distance is squared, not the matrix.
      * @param pts The transverse momenta of the particles.
      * @param rapidities The rapidities of the particles.
      * @param phis The azimuthal angles of the particles.
      * @param the exponent of the metric.
-     * @return The distance matrix between the particles.
+     * @return The distance squared matrix between the particles.
      **/
-    static std::vector<std::vector<double>> GeneralisedKtDistanceMatrix(const std::vector<double>& pts,
+    static std::vector<std::vector<double>> GeneralisedKtDistance2Matrix(const std::vector<double>& pts,
                                                                  const std::vector<double>& rapidities,
                                                                  const std::vector<double>& phis,
                                                                  const double& exponent);
 
     enum JetMetrics {cambridge_aachen, kt, antikt};
     /**
-     * @brief Distance between two particles in a named jet metric.
+     * @brief Distance squared between two particles in a named jet metric.
      * @param pt1 The transverse momentum of the first particle.
      * @param rapidity1 The rapidity of the first particle.
      * @param phi1 The azimuthal angle of the first particle.
@@ -159,21 +160,22 @@ class Functions
      * @param rapidity2 The rapidity of the second particle.
      * @param phi2 The azimuthal angle of the second particle.
      * @param the enum value of the metric.
-     * @return The distance between the two particles.
+     * @return The distance squared between the two particles.
      **/
-    static double NamedDistance(const double& pt1, const double& rapidity1, const double& phi1, 
+    static double NamedDistance2(const double& pt1, const double& rapidity1, const double& phi1, 
                          const double& pt2, const double& rapidity2, const double& phi2,
                          const JetMetrics& metric);
 
     /**
-     * @brief Distance matrix between a set of particles in a named jet metric.
+     * @brief Distance squared matrix between a set of particles in a named jet metric.
+     * Note, the distance is squared, not the matrix.
      * @param pts The transverse momenta of the particles.
      * @param rapidities The rapidities of the particles.
      * @param phis The azimuthal angles of the particles.
      * @param metric The enum value of the metric.
-     * @return The matrix of distances.
+     * @return The matrix of squared distances.
      **/
-    static std::vector<std::vector<double>> NamedDistanceMatrix(
+    static std::vector<std::vector<double>> NamedDistance2Matrix(
         const std::vector<double>& pts, const std::vector<double>& rapidities, const std::vector<double>& phis,
         const JetMetrics& metric);
 

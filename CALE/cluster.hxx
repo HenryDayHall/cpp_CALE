@@ -187,11 +187,11 @@ class Cluster
     std::vector<double> m_pzs;
 
     /**
-     * @brief a matrix of the distances between particles squared.
-     * By default, in the anti-kT metric.
+     * @brief a matrix of the distances squared between particles squared.
+     * By default, in the cambridge-aachen metric.
      * Used to decide seed order and also to calculate the Laplacian.
      **/
-    std::vector<std::vector<double>> m_distances;
+    std::vector<std::vector<double>> m_distances2;
 
     /**
      * @brief The calculated Laplacian of the event.

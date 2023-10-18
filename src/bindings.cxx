@@ -106,8 +106,8 @@ PYBIND11_MODULE(CALE_pybind, m) {
         );
 
 
-    m.def("GeneralisedKtDistance", &Functions::GeneralisedKtDistance, R"pbdoc(
-     * @brief Distance between two particles in the Generalised-Kt metric.
+    m.def("GeneralisedKtDistance2", &Functions::GeneralisedKtDistance2, R"pbdoc(
+     * @brief Distance squared between two particles in the Generalised-Kt metric.
      * @param pt1 The transverse momentum of the first particle.
      * @param rapidity1 The rapidity of the first particle.
      * @param phi1 The azimuthal angle of the first particle.
@@ -115,19 +115,20 @@ PYBIND11_MODULE(CALE_pybind, m) {
      * @param rapidity2 The rapidity of the second particle.
      * @param phi2 The azimuthal angle of the second particle.
      * @param the exponent of the metric.
-     * @return The distance between the two particles.
+     * @return The distance squared between the two particles.
      )pbdoc",
         py::arg("pt1"), py::arg("rapidity1"), py::arg("phi1"), py::arg("pt2"), py::arg("rapidity2"), py::arg("phi2"), py::arg("exponent")
         );
 
 
-    m.def("GeneralisedKtDistanceMatrix", &Functions::GeneralisedKtDistanceMatrix, R"pbdoc(
-     * @brief Distance matrix between a set of particles in the Generalised-Kt metric.
+    m.def("GeneralisedKtDistance2Matrix", &Functions::GeneralisedKtDistance2Matrix, R"pbdoc(
+     * @brief Distance squared matrix between a set of particles in the Generalised-Kt metric.
+     * Note the distance is squared, not the matrix.
      * @param pts The transverse momenta of the particles.
      * @param rapidities The rapidities of the particles.
      * @param phis The azimuthal angles of the particles.
      * @param the exponent of the metric.
-     * @return The distance matrix between the particles.
+     * @return The distance squared matrix between the particles.
      )pbdoc",
         py::arg("pts"), py::arg("rapidities"), py::arg("phis"), py::arg("exponent")
         );
@@ -137,8 +138,8 @@ PYBIND11_MODULE(CALE_pybind, m) {
         .value("kt", Functions::JetMetrics::kt)
         .value("antikt", Functions::JetMetrics::antikt);
 
-    m.def("NamedDistance", &Functions::NamedDistance, R"pbdoc(
-     * @brief Distance between two particles in a named jet metric.
+    m.def("NamedDistance2", &Functions::NamedDistance2, R"pbdoc(
+     * @brief Distance squared between two particles in a named jet metric.
      * @param pt1 The transverse momentum of the first particle.
      * @param rapidity1 The rapidity of the first particle.
      * @param phi1 The azimuthal angle of the first particle.
@@ -146,18 +147,19 @@ PYBIND11_MODULE(CALE_pybind, m) {
      * @param rapidity2 The rapidity of the second particle.
      * @param phi2 The azimuthal angle of the second particle.
      * @param the enum value of the metric.
-     * @return The distance between the two particles.
+     * @return The distance squared between the two particles.
      )pbdoc",
         py::arg("pt1"), py::arg("rapidity1"), py::arg("phi1"), py::arg("pt2"), py::arg("rapidity2"), py::arg("phi2"), py::arg("metric")
         );
 
-    m.def("NamedDistanceMatrix", &Functions::NamedDistanceMatrix, R"pbdoc(
-     * @brief Distance matrix between a set of particles in a named jet metric.
+    m.def("NamedDistance2Matrix", &Functions::NamedDistance2Matrix, R"pbdoc(
+     * @brief Distance squared matrix between a set of particles in a named jet metric.
+     * Note the distances are squared, not the matrix.
      * @param pts The transverse momenta of the particles.
      * @param rapidities The rapidities of the particles.
      * @param phis The azimuthal angles of the particles.
      * @param metric The enum value of the metric.
-     * @return The matrix of distances.
+     * @return The matrix of squared distances.
      )pbdoc",
         py::arg("pts"), py::arg("rapidities"), py::arg("phis"), py::arg("metric")
         );

@@ -92,6 +92,10 @@ std::vector<double> Functions::ChebyshevCoefficients(double (*kernal)(const doub
 std::vector<double> Functions::ChebyshevCoefficients(const int& max_coefficients, const int& grid_order,
                                                      const double& approx_interval_min,
                                                      const double& approx_interval_max){
+  MSG("max_coefficients = " << max_coefficients);
+  MSG("grid_order = " << grid_order);
+  MSG("approx_interval_min = " << approx_interval_min);
+  MSG("approx_interval_max = " << approx_interval_max);
   return ChebyshevCoefficients([](const double& x){return std::exp(-x);}, max_coefficients, grid_order,
                                approx_interval_min, approx_interval_max);
 };
@@ -220,14 +224,15 @@ double Functions::CambridgeAachenDistance2(const double& rapidity1, const double
   return delta_rapidity*delta_rapidity + delta_phi*delta_phi;
 };
 
-double Functions::GeneralisedKtDistance(const double& pt1, const double& rapidity1, const double& phi1, 
-                                        const double& pt2, const double& rapidity2, const double& phi2,
-                                        const double& exponent){
+double Functions::GeneralisedKtDistance2(const double& pt1, const double& rapidity1, const double& phi1, 
+                                         const double& pt2, const double& rapidity2, const double& phi2,
+                                         const double& exponent){
   double ca_distance2 = CambridgeAachenDistance2(rapidity1, phi1, rapidity2, phi2);
-  return std::min(std::pow(pt1, exponent), std::pow(pt2, exponent)) * std::sqrt(ca_distance2);
+  double twice_exponent = 2*exponent;
+  return std::min(std::pow(pt1, twice_exponent), std::pow(pt2, twice_exponent)) * ca_distance2;
 };
 
-std::vector<std::vector<double>> Functions::GeneralisedKtDistanceMatrix(const std::vector<double>& pts,
+std::vector<std::vector<double>> Functions::GeneralisedKtDistance2Matrix(const std::vector<double>& pts,
                                                              const std::vector<double>& rapidities,
                                                              const std::vector<double>& phis,
                                                              const double& exponent){
@@ -235,9 +240,9 @@ std::vector<std::vector<double>> Functions::GeneralisedKtDistanceMatrix(const st
   std::vector<std::vector<double>> result(n_particles, std::vector<double>(n_particles, 0.));
   for (int row=0; row<n_particles; row++){
     for (int col=0; col<row; col++){
-      result[row][col] = GeneralisedKtDistance(pts[row], rapidities[row], phis[row],
-                                               pts[col], rapidities[col], phis[col],
-                                               exponent);
+      result[row][col] = GeneralisedKtDistance2(pts[row], rapidities[row], phis[row],
+                                                pts[col], rapidities[col], phis[col],
+                                                exponent);
       result[col][row] = result[row][col];
     };
   };
@@ -254,18 +259,18 @@ enum JetMetrics {cambridge_aachen, kt, antikt};
  * @param rapidity2 The rapidity of the second particle.
  * @param phi2 The azimuthal angle of the second particle.
  * @param the enum value of the metric.
- * @return The distance between the two particles.
+ * @return The distance squared between the two particles.
  **/
-double Functions::NamedDistance(const double& pt1, const double& rapidity1, const double& phi1, 
+double Functions::NamedDistance2(const double& pt1, const double& rapidity1, const double& phi1, 
                                 const double& pt2, const double& rapidity2, const double& phi2,
                                 const JetMetrics& metric){
   switch (metric) {
     case cambridge_aachen:
-      return std::sqrt(CambridgeAachenDistance2(rapidity1, phi1, rapidity2, phi2));
+      return CambridgeAachenDistance2(rapidity1, phi1, rapidity2, phi2);
     case kt:
-      return GeneralisedKtDistance(pt1, rapidity1, phi1, pt2, rapidity2, phi2, 1.);
+      return GeneralisedKtDistance2(pt1, rapidity1, phi1, pt2, rapidity2, phi2, 1.);
     case antikt:
-      return GeneralisedKtDistance(pt1, rapidity1, phi1, pt2, rapidity2, phi2, -1.);
+      return GeneralisedKtDistance2(pt1, rapidity1, phi1, pt2, rapidity2, phi2, -1.);
     default:
       throw std::invalid_argument("Invalid jet metric");
   };
@@ -278,18 +283,18 @@ double Functions::NamedDistance(const double& pt1, const double& rapidity1, cons
  * @param rapidities The rapidities of the particles.
  * @param phis The azimuthal angles of the particles.
  * @param metric The enum value of the metric.
- * @return The matrix of distances.
+ * @return The matrix of squared distances.
  **/
-std::vector<std::vector<double>> Functions::NamedDistanceMatrix(
+std::vector<std::vector<double>> Functions::NamedDistance2Matrix(
     const std::vector<double>& pts, const std::vector<double>& rapidities, const std::vector<double>& phis,
     const JetMetrics& metric){
   switch (metric) {
     case cambridge_aachen:
-      return GeneralisedKtDistanceMatrix(pts, rapidities, phis, 0.);
+      return GeneralisedKtDistance2Matrix(pts, rapidities, phis, 0.);
     case kt:
-      return GeneralisedKtDistanceMatrix(pts, rapidities, phis, 1.);
+      return GeneralisedKtDistance2Matrix(pts, rapidities, phis, 1.);
     case antikt:
-      return GeneralisedKtDistanceMatrix(pts, rapidities, phis, -1.);
+      return GeneralisedKtDistance2Matrix(pts, rapidities, phis, -1.);
     default:
       throw std::invalid_argument("Invalid jet metric");
   };
