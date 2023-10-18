@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.4...3.18)
 project(Sgwj_library)
 
 # Useful definitions
-set(PROJECT_HEADER_DIR ${CMAKE_SOURCE_DIR}/sgwj)
+set(PROJECT_HEADER_DIR ${CMAKE_SOURCE_DIR}/CALE)
 set(PROJECT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 
 # the CMakeFlags for a library"
@@ -33,9 +33,9 @@ add_executable(Sgwj_toy examples/toy.cxx)
 target_link_libraries(Sgwj_toy PRIVATE Sgwj_library)
 
 # Now create python bindings
-project(sgwj_pybind)
+project(CALE_pybind)
 add_subdirectory(pybind11)
-pybind11_add_module(sgwj_pybind src/bindings.cxx)
-target_link_libraries(sgwj_pybind PRIVATE Sgwj_library)
-target_compile_definitions(sgwj_pybind
+pybind11_add_module(CALE_pybind src/bindings.cxx)
+target_link_libraries(CALE_pybind PRIVATE Sgwj_library)
+target_compile_definitions(CALE_pybind
                            PRIVATE VERSION_INFO=0.0.1)
