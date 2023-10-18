@@ -10,7 +10,7 @@ def build(build_dir = "./build", force_rebuild = False):
     elif not force_rebuild:
         # check if the python bindings already exist
         for name in os.listdir(build_dir):
-            if name.startswith("sgwj_pybind") and name.endswith(".so"):
+            if name.startswith("CALE_pybind") and name.endswith(".so"):
                 return build_dir
     # This file is in the location of the project root
     this_dir = os.path.dirname(os.path.abspath(__file__))
@@ -21,15 +21,15 @@ def build(build_dir = "./build", force_rebuild = False):
     os.system("make -j4")
     return build_dir
 
-sgwj_pybind = None
+CALE_pybind = None
 
 
 def get_module(build_dir):
-    global sgwj_pybind
-    if sgwj_pybind is not None:
-        return sgwj_pybind
+    global CALE_pybind
+    if CALE_pybind is not None:
+        return CALE_pybind
     # add the build directory to the PYTHONPATH
     sys.path.append(build_dir)
     # import the python bindings
-    import sgwj_pybind
-    return sgwj_pybind
+    import CALE_pybind
+    return CALE_pybind

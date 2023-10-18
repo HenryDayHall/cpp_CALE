@@ -8,7 +8,7 @@ def pytest_ignore_collect(collection_path, path, config):
     val = config.getvalue("-k")
     if val == "":
         stringy = collection_path.absolute().as_posix()
-        if "cpp_sgwj/pybind11" in stringy:
+        if "cpp_CALE/pybind11" in stringy:
             return True
     return False
 
