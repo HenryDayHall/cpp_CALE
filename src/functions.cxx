@@ -62,8 +62,8 @@ std::vector<double> Functions::ChebyshevCoefficients(double (*kernal)(const doub
     _grid_order = max_coefficients + 1;
   };
 
-  double half_interval = (approx_interval_max - approx_interval_min)/2.;
-  double center = (approx_interval_max + approx_interval_min)/2.;
+  double scale_interval = (approx_interval_max - approx_interval_min)/2.;
+  double shift_interval = (approx_interval_max + approx_interval_min)/2.;
   double grid_value, kernal_value;
   std::vector<double> grid;
   std::vector<double> kernal_values;
@@ -71,7 +71,7 @@ std::vector<double> Functions::ChebyshevCoefficients(double (*kernal)(const doub
   for (float i=1; i<_grid_order+1; i++){
     grid_value = (i - 0.5) * pi_over_grid_order;
     grid.push_back(grid_value);
-    kernal_value = kernal(half_interval * std::cos(grid_value) + center);
+    kernal_value = kernal(std::cos(grid_value)/scale_interval+shift_interval);
     kernal_values.push_back(kernal_value);
   };
   double coefficient_value;
@@ -92,10 +92,6 @@ std::vector<double> Functions::ChebyshevCoefficients(double (*kernal)(const doub
 std::vector<double> Functions::ChebyshevCoefficients(const int& max_coefficients, const int& grid_order,
                                                      const double& approx_interval_min,
                                                      const double& approx_interval_max){
-  MSG("max_coefficients = " << max_coefficients);
-  MSG("grid_order = " << grid_order);
-  MSG("approx_interval_min = " << approx_interval_min);
-  MSG("approx_interval_max = " << approx_interval_max);
   return ChebyshevCoefficients([](const double& x){return std::exp(-x);}, max_coefficients, grid_order,
                                approx_interval_min, approx_interval_max);
 };

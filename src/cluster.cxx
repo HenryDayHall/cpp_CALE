@@ -70,15 +70,10 @@ void Cluster::SetInputs(std::vector<int> labels,
   m_finished = std::vector<bool>(n_labels, false);
   // No pseudojets have parents yet
   m_parent_labels = std::vector<int>(n_labels, -1);
-  PRINT_VECTOR(m_pts);
-  PRINT_VECTOR(m_rapidites);
-  PRINT_VECTOR(m_phis);
   // Calculate the laplacian
   m_distances2 = Functions::NamedDistance2Matrix(m_pts, m_rapidites, m_phis,
                                                  Functions::cambridge_aachen);
-  PRINT_MATRIX(m_distances2);
   m_laplacian = Functions::Laplacian(m_distances2, m_sigma, true);
-  PRINT_MATRIX(m_laplacian);
   // Check the max number of jets
   m_max_jets = m_n_rounds < n_labels ? m_n_rounds : n_labels;
   // Decide on the seed order
@@ -97,8 +92,6 @@ void Cluster::SetInputs(std::vector<int> labels,
   std::iota(m_seed_indices.begin(), m_seed_indices.end(), 0);
   std::sort(m_seed_indices.begin(), m_seed_indices.end(),
             [&summed_distances](int i1, int i2){return summed_distances[i1] < summed_distances[i2];});
-  PRINT_VECTOR(m_seed_indices);
-  PRINT_VECTOR(s_chebyshev_coefficients);
 };
 
 const std::vector<int>& Cluster::GetLabels() const {
@@ -184,7 +177,6 @@ std::vector<int> Cluster::GetNextMerge() const {
   int seed;  // Get inside the loop so we update if a seed doesn't work
   while (labels.size() == 0){
     seed = this->GetSeed(start_seed_idx);
-    MSG("Seed is " << seed);
     if (seed == -1){
       // We have done all the real clustering,
       // just return the first avaliable as a junk jet.
@@ -195,24 +187,21 @@ std::vector<int> Cluster::GetNextMerge() const {
                                                                Cluster::s_chebyshev_coefficients,
                                                                seed, 
                                                                Cluster::s_interval);
-    PRINT_VECTOR(wavelets);
     double max_wavelet = *std::max_element(wavelets.begin(), wavelets.end());
     double min_wavelet = *std::min_element(wavelets.begin(), wavelets.end());
     double shifted_threshold = (max_wavelet - min_wavelet)*(m_cutoff + 1.)/2. + min_wavelet;
-    MSG("shifted_threshold is " << shifted_threshold);
     for (int i=0; i<wavelets.size(); i++){
       // Don't bother with things that aren't available
       if (!m_avaliable[i]){
         continue;
       }
       // Scale the wavelets from -1 to 1
-      if (wavelets[i] > shifted_threshold){
+      if (wavelets[i] < shifted_threshold){
         labels.push_back(m_labels[i]);
       }
     }
     // If no labels were found, we need to increase the seed index
     start_seed_idx++;
-    PRINT_VECTOR(labels);
   }
   return labels;
 };
