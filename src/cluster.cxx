@@ -3,7 +3,7 @@
 #include <cassert>
 #include <algorithm>
 #include <numeric>
-#include <math.h>
+#include <cmath>
 #include <stdexcept>
 
 #include <iostream>
@@ -64,8 +64,8 @@ void Cluster::SetInputs(std::vector<int> labels,
     m_pys.push_back(pxpypx[1]);
     m_pzs.push_back(pxpypx[2]);
   }
-  // All particles become pseudojets and are avaliable for merging
-  m_avaliable = std::vector<bool>(n_labels, true);
+  // All particles become pseudojets and are available for merging
+  m_available = std::vector<bool>(n_labels, true);
   // No jets are finished
   m_finished = std::vector<bool>(n_labels, false);
   // No pseudojets have parents yet
@@ -152,7 +152,7 @@ int Cluster::GetSeed(int start_seed_idx) const {
   if (idx >= m_n_seed_indices){
     return -1;
   }
-  while (m_avaliable[m_seed_indices[idx]] == false){
+  while (m_available[m_seed_indices[idx]] == false){
     idx++;
     if (idx >= m_n_seed_indices){
       return -1;
@@ -162,8 +162,8 @@ int Cluster::GetSeed(int start_seed_idx) const {
 };
 
 std::vector<int> Cluster::GetSingleAvaliable() const{
-  for (int i=0; i<m_avaliable.size(); i++){
-    if (m_avaliable[i] == true){
+  for (int i=0; i<m_available.size(); i++){
+    if (m_available[i] == true){
       return {m_labels[i]};
     }
   }
@@ -179,7 +179,7 @@ std::vector<int> Cluster::GetNextMerge() const {
     seed = this->GetSeed(start_seed_idx);
     if (seed == -1){
       // We have done all the real clustering,
-      // just return the first avaliable as a junk jet.
+      // just return the first available as a junk jet.
       return GetSingleAvaliable();
     }
     // Decide what is close to the seed
@@ -192,7 +192,7 @@ std::vector<int> Cluster::GetNextMerge() const {
     double shifted_threshold = (max_wavelet - min_wavelet)*(m_cutoff + 1.)/2. + min_wavelet;
     for (int i=0; i<wavelets.size(); i++){
       // Don't bother with things that aren't available
-      if (!m_avaliable[i]){
+      if (!m_available[i]){
         continue;
       }
       // Scale the wavelets from -1 to 1
@@ -235,11 +235,11 @@ void Cluster::DoMerge(std::vector<int> labels, int label_new,
   m_pzs.push_back(pxpypz[2]);
   // update the availability and parantage
   for (int label : labels){
-    m_avaliable[m_label_to_index[label]] = false;
+    m_available[m_label_to_index[label]] = false;
     m_parent_labels[m_label_to_index[label]] = label_new;
   }
   // The final jet is not only unavailable, but also finished
-  m_avaliable.push_back(false);
+  m_available.push_back(false);
   m_finished.push_back(true);
   m_parent_labels.push_back(-1);
 };
@@ -258,7 +258,7 @@ bool Cluster::IsFinished() const {
   // We do not expect all pseudojets to be finished, the ones
   // that are merged into other jets are "unfinished"
   // but we do expect that none of them are available
-  return std::none_of(m_avaliable.begin(), m_avaliable.end(), [](bool v) { return v; });
+  return std::none_of(m_available.begin(), m_available.end(), [](bool v) { return v; });
 };
 
 const std::vector<int>& Cluster::GetJets() const {

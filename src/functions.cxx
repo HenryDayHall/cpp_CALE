@@ -1,5 +1,5 @@
 #include "functions.hxx"
-#include <math.h>
+#include <cmath>
 
 #include <iostream>
 #define MSG(x) std::cout << __FILE__ << ">" << __LINE__ << "; " << x << std::endl;

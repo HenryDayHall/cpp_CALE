@@ -215,9 +215,9 @@ class Cluster
     int m_max_jets;
 
     /**
-     * @brief Indicates if a jet is avaliable for further joining.
+     * @brief Indicates if a jet is available for further joining.
      **/
-    std::vector<bool> m_avaliable;
+    std::vector<bool> m_available;
     /**
      * @brief Notes the index of each label in the internal list of labels.
      **/
@@ -246,7 +246,7 @@ class Cluster
 
     /**
      * @brief An object to form a junk jet.
-     * This is chosen as the next object that is avaliable.
+     * This is chosen as the next object that is available.
      * The assumption is that all real jets have been formed.
      * If there are no available objects returns an empty vector.
      * @return vector of the label of the object to be used as a junk jet
@@ -262,12 +262,12 @@ class Cluster
 
     /**
      * @brief Get the index of the object to be used as a seed.
-     * If there are no seeds avaliable, returns -1.
+     * If there are no seeds available, returns -1.
      * @param start_seed_idx index of the seed to start from,
      *                      normally, the number of jets is a good choice
      *                      but sometimes nothing is captured by a wavlet, so the next
      *                      seed should be used.
-     * @return internal index of the seed, or -1 if none avaliable
+     * @return internal index of the seed, or -1 if none available
      **/
     int GetSeed(int start_seed_idx) const;
 
